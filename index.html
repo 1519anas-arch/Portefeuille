@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portefeuille Bourse MAD</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<style>
+:root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--accent:#007aff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.1)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+body{background:var(--bg);color:#333;padding:16px;min-height:100vh;background-size:cover;background-position:center;background-attachment:fixed}
+.hide{display:none!important}
+.btn{background:var(--accent);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:600;font-size:15px}
+.btn:active{opacity:.7}
+.btn-grey{background:#e5e5ea;color:#000}
+.btn-red{background:var(--red)}
+.btn-green{background:var(--green)}
+.btn-small{padding:6px 10px;font-size:12px;border-radius:8px;margin:0 2px}
+input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px;margin:6px 0}
+label{font-size:13px;color:#666;margin-top:8px;display:block}
+.card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+.card-dark{background:var(--dark);color:#fff;text-align:center}
+h1{font-size:20px;margin-bottom:4px}
+h2{font-size:18px;margin-bottom:12px}
+h3{font-size:14px;color:#666;margin:16px 0 8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.badge{font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea;display:inline-block}
+.green{color:var(--green)}.red{color:var(--red)}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
+th{font-size:11px;color:#666;font-weight:600}
+.boussole{display:grid;grid-template-areas:"haut haut haut" "gauche centre droite" "bas1 bas1 bas2";gap:12px;max-width:400px;margin:40px auto}
+.zone{padding:20px;border-radius:16px;text-align:center;font-weight:600;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+.zone:active{transform:scale(.97)}
+.centre{grid-area:centre;background:var(--dark);color:#fff}
+.haut{grid-area:haut;background:var(--card)}.gauche{grid-area:gauche;background:var(--card)}
+.droite{grid-area:droite;background:var(--card)}.bas1{grid-area:bas1;background:var(--card)}.bas2{grid-area:bas2;background:var(--card)}
+.montant{font-size:28px;font-weight:700;margin:8px 0}
+.nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal-content{background:var(--card);padding:20px;border-radius:16px;width:90%;max-width:400px}
+</style>
+</head>
+<body>
+
+<div id="ecranBoussole">
+  <div class="boussole">
+    <div class="zone haut" onclick="showEcran('portefeuille')">Portefeuille</div>
+    <div class="zone gauche" onclick="showEcran('vente')">Vente</div>
+    <div class="zone centre" onclick="showEcran('invest')">
+      <div style="font-size:12px;opacity:.7">PROFIT NET GLOBAL</div>
+      <div class="montant" id="profitGlobal">0.00 MAD</div>
+      <div style="font-size:12px;opacity:.7">Solde: <span id="soldeGlobal">0.00</span> MAD</div>
+    </div>
+    <div class="zone droite" onclick="showEcran('achat')">Achat</div>
+    <div class="zone bas1" onclick="showEcran('excel')">Excel</div>
+    <div class="zone bas2" onclick="showEcran('historique')">Historique</div>
+  </div>
+</div>
+
+<div id="ecranInvest" class="hide">
+  <div class="nav-top"><h1>Investissement</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="card">
+    <div class="card-dark" style="margin-bottom:12px">
+      <div style="font-size:12px;opacity:.7">SOLDE DISPONIBLE</div>
+      <div class="montant" id="soldeInvest">0.00 MAD</div>
+    </div>
+    <label>Montant MAD</label>
+    <input type="number" id="montantInvest" step="0.01" placeholder="Tape un montant positif">
+    <div class="grid2" style="margin-top:12px">
+      <button class="btn btn-green" onclick="mouvementInvest(1)">Dépôt</button>
+      <button class="btn btn-red" onclick="mouvementInvest(-1)">Retrait</button>
+    </div>
+    <h3>Historique mouvements</h3>
+    <div id="historiqueInvest"></div>
+  </div>
+</div>
+
+<div id="ecranPortefeuille" class="hide">
+  <div class="nav-top"><h1>Portefeuille</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div id="listePortefeuille"></div>
+</div>
+
+<div id="ecranAchat" class="hide">
+  <div class="nav-top"><h1>Achat</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="card">
+    <label>Valeur</label>
+    <select id="valeurAchat" onchange="toggleAutreAchat()"></select>
+    <input id="valeurAchatAutre" class="hide" placeholder="Nouvelle valeur">
+    <label>Date</label><input type="date" id="dateAchat">
+    <label>Quantité</label><input type="number" id="qteAchat" step="1" oninput="calcAchat()">
+    <label>Prix MAD</label><input type="number" id="prixAchat" step="0.01" oninput="calcAchat()">
+    <label>Coût %</label><input type="number" id="coutAchat" step="0.01" value="0.11" oninput="calcAchat()">
+    <label><input type="checkbox" id="pruManuel" onchange="togglePRU()"> PRU manuel</label>
+    <input type="number" id="pruAchatManuel" step="0.01" class="hide">
+    <div class="card-dark" style="margin-top:12px">
+      <div style="font-size:12px;opacity:.7">PRU calculé</div>
+      <div class="montant" id="pruCalcule">0.00 MAD</div>
+      <div style="font-size:12px;opacity:.7">Total: <span id="totalAchat">0.00</span> MAD</div>
+    </div>
+    <button class="btn" style="width:100%;margin-top:12px" onclick="validerAchat()">Valider Achat</button>
+  </div>
+</div>
+
+<div id="ecranVente" class="hide">
+  <div class="nav-top"><h1>Vente</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="card">
+    <label>Valeur en stock</label><select id="valeurVente" onchange="updateStock()"></select>
+    <div class="badge">Stock: <span id="stockDispo">0</span> | PRU: <span id="pruVente">0.00</span></div>
+    <label>Date</label><input type="date" id="dateVente">
+    <label>Quantité</label><input type="number" id="qteVente" step="1" oninput="simuVente()">
+    <label>Prix vente MAD</label><input type="number" id="prixVente" step="0.01" oninput="simuVente()">
+    <label>Coût %</label><input type="number" id="coutVente" step="0.01" value="0.11" oninput="simuVente()">
+    <div class="card-dark" style="margin-top:12px">
+      <div style="font-size:12px;opacity:.7">NET ENCAISSÉ</div>
+      <div class="montant" id="gainNetSimu">0.00 MAD</div>
+      <div style="font-size:11px;opacity:.7;text-align:left;margin-top:8px" id="detailSimu"></div>
+    </div>
+    <button class="btn" style="width:100%;margin-top:12px" onclick="validerVente()">Valider Vente</button>
+  </div>
+</div>
+
+<div id="ecranExcel" class="hide">
+  <div class="nav-top"><h1>Excel</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="card">
+    <h2>Importer</h2>
+    <p style="font-size:12px;color:#666">Format: DATE | TYPE | VALEUR | QTE | PRIX | COUT<br>Accepte 1 000,00 et 1000.00 | COUT=0.11 pour 0.11%</p>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+    <button class="btn" onclick="importExcel()">Importer fichier</button>
+    <h2 style="margin-top:20px">Exporter</h2>
+    <p style="font-size:12px;color:#666">12 colonnes avec PV_NETTE_REALISEE. Compatible Google Sheets + Excel Mobile</p>
+    <div class="grid2">
+      <button class="btn" onclick="exportExcel()">Excel.xlsx</button>
+      <button class="btn btn-grey" onclick="exportCSV()">CSV mobile</button>
+    </div>
+    <h2 style="margin-top:20px">Personnalisation</h2>
+    <input type="file" id="bgInput" accept="image/*" class="hide" onchange="changeBackground()">
+    <div class="grid2">
+      <button class="btn" onclick="document.getElementById('bgInput').click()">Changer fond d'écran</button>
+      <button class="btn btn-grey" onclick="resetBackground()">Reset fond</button>
+    </div>
+  </div>
+</div>
+
+<div id="ecranHistorique" class="hide">
+  <div class="nav-top"><h1>Historique</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="card">
+    <label>Type</label>
+    <select id="filtreType" onchange="renderHistorique()">
+      <option value="">Tous</option>
+      <option value="ACHAT">Achats</option>
+      <option value="VENTE">Ventes</option>
+    </select>
+    <label>Valeur</label>
+    <select id="filtreValeur" onchange="renderHistorique()"></select>
+    <label>Période</label>
+    <select id="filtreDate" onchange="renderHistorique()">
+      <option value="">Toutes</option>
+      <option value="semaine">Cette semaine</option>
+      <option value="mois">Ce mois</option>
+      <option value="annee">Cette année</option>
+    </select>
+    <div class="table-wrap" style="margin-top:12px" id="tableHistorique"></div>
+  </div>
+</div>
+
+<div id="modalEdit" class="modal hide">
+  <div class="modal-content">
+    <h2>Modifier transaction</h2>
+    <input type="hidden" id="editId">
+    <label>Date</label><input type="date" id="editDate">
+    <label>Type</label><select id="editType"><option>ACHAT</option><option>VENTE</option></select>
+    <label>Valeur</label><input type="text" id="editValeur">
+    <label>Quantité</label><input type="number" id="editQte" step="1">
+    <label>Prix</label><input type="number" id="editPrix" step="0.01">
+    <label>Coût %</label><input type="number" id="editCout" step="0.01">
+    <div class="grid2" style="margin-top:12px">
+      <button class="btn btn-grey" onclick="closeModal()">Annuler</button>
+      <button class="btn" onclick="saveEdit()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let DB = {invest:0, mouvements:[], transactions:[], background:''};
+const R2 = x => Math.round(x*100)/100;
+const R2inf = x => Math.floor(x*100)/100;
+const fmt = x => R2(x).toFixed(2);
+
+function load() {
+  let d = localStorage.getItem('pfbourse');
+  if(d) DB = JSON.parse(d);
+  applyBackground();
+  updateAll();
+  document.getElementById('dateAchat').valueAsDate = new Date();
+  document.getElementById('dateVente').valueAsDate = new Date();
+}
+
+function save() {
+  localStorage.setItem('pfbourse', JSON.stringify(DB));
+  updateAll();
+}
+
+function applyBackground() {
+  if(DB.background) {
+    document.body.style.backgroundImage = `url(${DB.background})`;
+    document.body.style.backgroundColor = 'transparent';
+  } else {
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundColor = 'var(--bg)';
+  }
+}
+
+function changeBackground() {
+  let file = document.getElementById('bgInput').files[0];
+  if(!file) return;
+  let reader = new FileReader();
+  reader.onload = e => {
+    DB.background = e.target.result;
+    save();
+    applyBackground();
+    alert('Fond d\'écran changé');
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetBackground() {
+  if(confirm('Revenir au fond gris par défaut?')) {
+    DB.background = '';
+    save();
+    applyBackground();
+  }
+}
+
+function updateAll() {
+  calcPortefeuille();
+  updateBoussole();
+  initSelects();
+  initFiltreValeur();
+}
+
+function showEcran(nom) {
+  ['boussole','invest','portefeuille','achat','vente','excel','historique'].forEach(e=>{
+    document.getElementById('ecran'+e.charAt(0).toUpperCase()+e.slice(1)).classList.add('hide');
+  });
+  document.getElementById('ecran'+nom.charAt(0).toUpperCase()+nom.slice(1)).classList.remove('hide');
+  if(nom=='portefeuille') renderPortefeuille();
+  if(nom=='historique') renderHistorique();
+  if(nom=='invest') renderInvest();
+  if(nom=='vente') updateStock();
+}
+
+function calcPortefeuille() {
+  DB.portefeuille = {};
+  DB.transactions.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id).forEach(t=>{
+    if(!DB.portefeuille[t.valeur]) DB.portefeuille[t.valeur] = {qte:0, pru:0, total:0};
+    let p = DB.portefeuille[t.valeur];
+    if(t.type=='ACHAT') {
+      let nouveauTotal = p.total + t.pru*t.qte;
+      p.qte += t.qte;
+      p.total = nouveauTotal;
+      p.pru = p.qte>0? R2(p.total/p.qte) : 0;
+    } else {
+      p.qte -= t.qte;
+      p.total = p.qte * p.pru;
+      if(p.qte<=0) {
+        p.qte = 0;
+        p.total = 0;
+        p.pru = 0;
+      }
+    }
+  });
+  Object.keys(DB.portefeuille).forEach(v=>{
+    if(DB.portefeuille[v].qte<=0) delete DB.portefeuille[v];
+  });
+}
+
+function getSolde() {
+  let depenses = DB.transactions.filter(t=>t.type=='ACHAT').reduce((s,t)=>s+t.pru*t.qte,0);
+  let encaisse = DB.transactions.filter(t=>t.type=='VENTE').reduce((s,t)=>s+t.netEncaisse,0);
+  return R2(DB.invest - depenses + encaisse);
+}
+
+function updateBoussole() {
+  let pvNette = DB.transactions.filter(t=>t.type=='VENTE').reduce((s,t)=>s+t.pvNette,0);
+  let solde = getSolde();
+  document.getElementById('profitGlobal').textContent = fmt(pvNette)+' MAD';
+  document.getElementById('soldeGlobal').textContent = fmt(solde);
+  document.getElementById('profitGlobal').className = 'montant '+(pvNette>=0?'green':'red');
+}
+
+function mouvementInvest(signe) {
+  let m = parseFloat(document.getElementById('montantInvest').value);
+  if(!m || m<=0) return alert('Tape un montant positif');
+  let montant = R2(m * signe);
+  DB.mouvements.push({date:new Date().toISOString().split('T')[0], montant:montant});
+  DB.invest = R2(DB.invest + montant);
+  save();
+  renderInvest();
+  document.getElementById('montantInvest').value = '';
+}
+
+function renderInvest() {
+  document.getElementById('soldeInvest').textContent = fmt(getSolde())+' MAD';
+  let h = DB.mouvements.map(m=>`<div>${m.date}: ${m.montant>0?'+':''}${fmt(m.montant)} MAD</div>`).join('');
+  document.getElementById('historiqueInvest').innerHTML = h || 'Aucun mouvement';
+}
+
+function renderPortefeuille() {
+  let html = '';
+  let totalGlobal = 0;
+  Object.keys(DB.portefeuille).forEach(v=>{
+    let p = DB.portefeuille[v];
+    let valGlobal = p.pru * p.qte;
+    totalGlobal += valGlobal;
+    html += `<div class="card">
+      <div style="display:flex;justify-content:space-between"><h2>${v}</h2><div class="badge">${p.qte} titres</div></div>
+      <div class="grid2">
+        <div><div style="font-size:12px;color:#666">PRU unitaire</div><div style="font-size:18px;font-weight:600">${fmt(p.pru)}</div></div>
+        <div><div style="font-size:12px;color:#666">Valeur globale</div><div style="font-size:18px;font-weight:600">${fmt(valGlobal)}</div></div>
+      </div>
+    </div>`;
+  });
+  html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PORTEFEUILLE</div><div class="montant">${fmt(totalGlobal)} MAD</div></div>`;
+  document.getElementById('listePortefeuille').innerHTML = html || '<div class="card">Portefeuille vide</div>';
+}
+
+function initSelects() {
+  let valeurs = [...new Set(DB.transactions.map(t=>t.valeur))];
+  let ha = '<option value="">Choisir...</option>'+valeurs.map(v=>`<option>${v}</option>`).join('')+'<option value="AUTRE">Autre...</option>';
+  document.getElementById('valeurAchat').innerHTML = ha;
+  let hv = '<option value="">Choisir...</option>'+Object.keys(DB.portefeuille).map(v=>`<option>${v}</option>`).join('');
+  document.getElementById('valeurVente').innerHTML = hv;
+}
+
+function initFiltreValeur() {
+  let valeurs = [...new Set(DB.transactions.map(t=>t.valeur))];
+  let fv = '<option value="">Toutes</option>'+valeurs.map(v=>`<option>${v}</option>`).join('');
+  document.getElementById('filtreValeur').innerHTML = fv;
+}
+
+function toggleAutreAchat() {
+  document.getElementById('valeurAchatAutre').classList.toggle('hide', document.getElementById('valeurAchat').value!='AUTRE');
+}
+
+function togglePRU() {
+  document.getElementById('pruAchatManuel').classList.toggle('hide',!document.getElementById('pruManuel').checked);
+  calcAchat();
+}
+
+function calcAchat() {
+  let q = parseFloat(document.getElementById('qteAchat').value)||0;
+  let p = parseFloat(document.getElementById('prixAchat').value)||0;
+  let c = parseFloat(document.getElementById('coutAchat').value)||0;
+  let frais = R2(p * c / 100);
+  let pru = document.getElementById('pruManuel').checked? parseFloat(document.getElementById('pruAchatManuel').value)||0 : R2(p + frais);
+  document.getElementById('pruCalcule').textContent = fmt(pru)+' MAD';
+  document.getElementById('totalAchat').textContent = fmt(pru * q);
+}
+
+function clearAchat() {
+  document.getElementById('valeurAchat').value = '';
+  document.getElementById('valeurAchatAutre').value = '';
+  document.getElementById('valeurAchatAutre').classList.add('hide');
+  document.getElementById('qteAchat').value = '';
+  document.getElementById('prixAchat').value = '';
+  document.getElementById('coutAchat').value = '0.11';
+  document.getElementById('pruManuel').checked = false;
+  document.getElementById('pruAchatManuel').value = '';
+  document.getElementById('pruAchatManuel').classList.add('hide');
+  calcAchat();
+}
+
+function validerAchat() {
+  let v = document.getElementById('valeurAchat').value=='AUTRE'? document.getElementById('valeurAchatAutre').value.trim() : document.getElementById('valeurAchat').value;
+  let d = document.getElementById('dateAchat').value;
+  let q = parseFloat(document.getElementById('qteAchat').value);
+  let p = parseFloat(document.getElementById('prixAchat').value);
+  let c = parseFloat(document.getElementById('coutAchat').value);
+  if(!v||!d||!q||!p) return alert('Remplis tout');
+  let frais = R2(p * c / 100);
+  let pru = document.getElementById('pruManuel').checked? parseFloat(document.getElementById('pruAchatManuel').value) : R2(p + frais);
+  if(pru*q > getSolde()) return alert('Dépasse le solde: '+fmt(getSolde())+' MAD');
+  DB.transactions.push({id:Date.now(), type:'ACHAT', date:d, valeur:v, qte:q, prix:p, cout:c, frais:frais, pru:pru});
+  save();
+  clearAchat();
+  alert('Achat validé');
+  showEcran('boussole');
+}
+
+function updateStock() {
+  let v = document.getElementById('valeurVente').value;
+  let p = DB.portefeuille[v];
+  document.getElementById('stockDispo').textContent = p? p.qte : 0;
+  document.getElementById('pruVente').textContent = p? fmt(p.pru) : '0.00';
+  simuVente();
+}
+
+function simuVente() {
+  let v = document.getElementById('valeurVente').value;
+  let q = parseFloat(document.getElementById('qteVente').value)||0;
+  let p = parseFloat(document.getElementById('prixVente').value)||0;
+  let c = parseFloat(document.getElementById('coutVente').value)||0;
+  let port = DB.portefeuille[v];
+  if(!port||!q||!p) {
+    document.getElementById('gainNetSimu').textContent = '0.00 MAD';
+    document.getElementById('detailSimu').textContent = '';
+    return;
+  }
+  let fraisV = R2(p * c / 100);
+  let prixNet = R2(p - fraisV);
+  let pvBrute = R2((prixNet - port.pru) * q);
+  let taxe = pvBrute>0? R2inf(pvBrute * 0.15) : 0;
+  let pvNette = R2(pvBrute - taxe);
+  let netEncaisse = R2(prixNet * q - taxe);
+  document.getElementById('gainNetSimu').textContent = fmt(netEncaisse)+' MAD';
+  document.getElementById('gainNetSimu').className = 'montant '+(pvNette>=0?'green':'red');
+  document.getElementById('detailSimu').innerHTML = `
+    Prix vente net: ${fmt(prixNet)}<br>
+    PRU stock: ${fmt(port.pru)}<br>
+    PV Brute: ${fmt(pvBrute)} MAD<br>
+    Taxe 15%: ${fmt(taxe)} MAD<br>
+    PV Nette: ${fmt(pvNette)} MAD<br>
+    Net encaissé: ${fmt(netEncaisse)} MAD
+  `;
+}
+
+function clearVente() {
+  document.getElementById('valeurVente').value = '';
+  document.getElementById('qteVente').value = '';
+  document.getElementById('prixVente').value = '';
+  document.getElementById('coutVente').value = '0.11';
+  updateStock();
+}
+
+function validerVente() {
+  let v = document.getElementById('valeurVente').value;
+  let d = document.getElementById('dateVente').value;
+  let q = parseFloat(document.getElementById('qteVente').value);
+  let p = parseFloat(document.getElementById('prixVente').value);
+  let c = parseFloat(document.getElementById('coutVente').value);
+  let port = DB.portefeuille[v];
+  if(!v||!d||!q||!p) return alert('Remplis tout');
+  if(q > port.qte) return alert('Qté > stock: '+port.qte);
+  let fraisV = R2(p * c / 100);
+  let prixNet = R2(p - fraisV);
+  let pvBrute = R2((prixNet - port.pru) * q);
+  let taxe = pvBrute>0? R2inf(pvBrute * 0.15) : 0;
+  let pvNette = R2(pvBrute - taxe);
+  let netEncaisse = R2(prixNet * q - taxe);
+  DB.transactions.push({id:Date.now(), type:'VENTE', date:d, valeur:v, qte:q, prix:p, cout:c, frais:fraisV, pru:port.pru, pvBrute:pvBrute, taxe:taxe, pvNette:pvNette, netEncaisse:netEncaisse});
+  save();
+  clearVente();
+  alert(`Vente OK\nPV Brute: ${fmt(pvBrute)}\nTaxe: ${fmt(taxe)}\nPV Nette: ${fmt(pvNette)}\nNet encaissé: ${fmt(netEncaisse)}`);
+  showEcran('boussole');
+}
+
+function getExportData() {
+  let data = [['DATE','TYPE','VALEUR','QTE','PRIX','COUT%','FRAIS','PRU','PV_BRUTE','TAXE_15%','NET_ENCAISSE','PV_NETTE_REALISEE']];
+  DB.transactions.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id).forEach(t=>{
+    if(t.type=='ACHAT') {
+      data.push([t.date,t.type,t.valeur,t.qte,t.prix,t.cout,t.frais,t.pru,'','','',0]);
+    } else {
+      data.push([t.date,t.type,t.valeur,t.qte,t.prix,t.cout,t.frais,t.pru,t.pvBrute,t.taxe,t.netEncaisse,t.pvNette]);
+    }
+  });
+  return data;
+}
+
+// CORRECTIF POCO X3 MIUI : Blob au lieu de base64
+function exportExcel() {
+  let data = getExportData();
+  let ws = XLSX.utils.aoa_to_sheet(data);
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Historique");
+  let wbout = XLSX.write(wb, {bookType:'xlsx', type:'array', cellStyles:true});
+  let blob = new Blob([wbout], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  let url = URL.createObjectURL(blob);
+  let link = document.createElement('a');
+  link.href = url;
+  link.download = 'portefeuille_mad.xlsx';
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(()=>URL.revokeObjectURL(url), 100);
+}
+
+function exportCSV() {
+  let data = getExportData();
+  let csv = data.map(r=>r.join(';')).join('\n');
+  let blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  let link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'portefeuille_mad.csv';
+  link.click();
+}
+
+// CORRECTIF IMPORT : Tri par date + recalcul stock temps réel + fix dates Excel
+function importExcel() {
+  let file = document.getElementById('fileInput').files[0];
+  if(!file) return alert('Choisir fichier');
+  let reader = new FileReader();
+  reader.onload = e=>{
+    let wb = XLSX.read(e.target.result, {cellDates:false, raw:true});
+    let data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header:1, defval:''});
+    let count = 0;
+    let erreurs = [];
+
+    const cleanNumber = (val) => {
+      if(typeof val === 'number') return val;
+      return parseFloat(String(val).replace(/\s/g,'').replace(',','.')) || 0;
+    };
+
+    const excelDateToStr = (val) => {
+      if(val instanceof Date) {
+        return val.toISOString().split('T')[0];
+      }
+      if(typeof val === 'number') {
+        let d = XLSX.SSF.parse_date_code(val);
+        return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+      }
+      return String(val).trim().split(' ')[0];
+    };
+
+    let tempTrans = [];
+    data.slice(1).forEach((r,i)=>{
+      let date = excelDateToStr(r[0]);
+      let type = String(r[1]).trim().toUpperCase();
+      let val = String(r[2]).trim();
+      let qte = cleanNumber(r[3]);
+      let prix = cleanNumber(r[4]);
+      let cout = cleanNumber(r[5]) || 0.11;
+      if(!date||!type||!val||!qte||!prix) return;
+      tempTrans.push({id:Date.now()+Math.random()+i, type, date, valeur:val, qte, prix, cout});
+    });
+
+    tempTrans.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id);
+
+    let portTemp = {};
+    tempTrans.forEach(t=>{
+      if(!portTemp[t.valeur]) portTemp[t.valeur] = {qte:0, pru:0, total:0};
+      let p = portTemp[t.valeur];
+
+      if(t.type=='ACHAT') {
+        let frais=R2(t.prix*t.cout/100), pru=R2(t.prix+frais);
+        DB.transactions.push({...t, frais, pru});
+        p.total += pru*t.qte;
+        p.qte += t.qte;
+        p.pru = p.qte>0? R2(p.total/p.qte) : 0;
+        count++;
+      } else if(t.type=='VENTE') {
+        if(p.qte>=t.qte) {
+          let frais=R2(t.prix*t.cout/100), prixNet=R2(t.prix-frais);
+          let pvBrute=R2((prixNet-p.pru)*t.qte), taxe=pvBrute>0?R2inf(pvBrute*0.15):0;
+          let pvNette=R2(pvBrute-taxe), netEncaisse=R2(prixNet*t.qte-taxe);
+          DB.transactions.push({...t, frais, pru:p.pru, pvBrute, taxe, pvNette, netEncaisse});
+          p.qte -= t.qte;
+          p.total = p.qte * p.pru;
+          count++;
+        } else {
+          erreurs.push(`${t.date} ${t.valeur}: stock insuffisant ${p.qte}<${t.qte}`);
+        }
+      }
+    });
+
+    save();
+    let msg = `Import terminé: ${count} transactions ajoutées`;
+    if(erreurs.length) msg += '\n\nErreurs:\n' + erreurs.join('\n');
+    alert(msg);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function triHistorique() {
+  let fType = document.getElementById('filtreType').value;
+  let fVal = document.getElementById('filtreValeur').value;
+  let fDate = document.getElementById('filtreDate').value;
+  let data = DB.transactions.filter(t=>{
+    if(fType && t.type!=fType) return false;
+    if(fVal && t.valeur!=fVal) return false;
+    if(fDate) {
+      let d = new Date(t.date);
+      let now = new Date();
+      if(fDate=='semaine') {
+        let deb = new Date(now.setDate(now.getDate()-now.getDay()));
+        if(d<deb) return false;
+      }
+      if(fDate=='mois' && (d.getMonth()!=new Date().getMonth() || d.getFullYear()!=new Date().getFullYear())) return false;
+      if(fDate=='annee' && d.getFullYear()!=new Date().getFullYear()) return false;
+    }
+    return true;
+  });
+  return data.sort((a,b)=>b.date.localeCompare(a.date) || b.id-a.id);
+}
+
+function renderHistorique() {
+  let data = triHistorique();
+  let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th><th>Actions</th></tr>';
+  data.forEach(t=>{
+    html += `<tr>
+      <td>${t.date}</td>
+      <td><span class="badge ${t.type=='ACHAT'?'green':'red'}">${t.type}</span></td>
+      <td>${t.valeur}</td>
+      <td>${t.qte}</td>
+      <td>${fmt(t.prix)}</td>
+      <td>${t.cout}</td>
+      <td>${fmt(t.pru)}</td>
+      <td class="${t.type=='VENTE'?(t.pvNette>=0?'green':'red'):''}">${t.type=='VENTE'?fmt(t.pvNette):'-'}</td>
+      <td>
+        <button class="btn btn-small btn-grey" onclick="editTrans(${t.id})">Edit</button>
+        <button class="btn btn-small btn-red" onclick="supprTrans(${t.id})">X</button>
+      </td>
+    </tr>`;
+  });
+  document.getElementById('tableHistorique').innerHTML = html + '</table>';
+}
+
+function supprTrans(id) {
+  if(confirm('Supprimer cette transaction? Cette action est définitive.')) {
+    DB.transactions = DB.transactions.filter(t=>t.id!=id);
+    save();
+    renderHistorique();
+  }
+}
+
+function editTrans(id) {
+  let t = DB.transactions.find(x=>x.id==id);
+  if(!t) return;
+  document.getElementById('editId').value = id;
+  document.getElementById('editDate').value = t.date;
+  document.getElementById('editType').value = t.type;
+  document.getElementById('editValeur').value = t.valeur;
+  document.getElementById('editQte').value = t.qte;
+  document.getElementById('editPrix').value = t.prix;
+  document.getElementById('editCout').value = t.cout;
+  document.getElementById('modalEdit').classList.remove('hide');
+}
+
+function closeModal() {
+  document.getElementById('modalEdit').classList.add('hide');
+}
+
+function saveEdit() {
+  let id = parseFloat(document.getElementById('editId').value);
+  let t = DB.transactions.find(x=>x.id==id);
+  if(!t) return;
+  if(!confirm('Valider les modifications?')) return;
+
+  t.date = document.getElementById('editDate').value;
+  t.type = document.getElementById('editType').value;
+  t.valeur = document.getElementById('editValeur').value;
+  t.qte = parseFloat(document.getElementById('editQte').value);
+  t.prix = parseFloat(document.getElementById('editPrix').value);
+  t.cout = parseFloat(document.getElementById('editCout').value);
+  t.frais = R2(t.prix * t.cout / 100);
+
+  if(t.type=='ACHAT') {
+    t.pru = R2(t.prix + t.frais);
+    delete t.pvBrute; delete t.taxe; delete t.pvNette; delete t.netEncaisse;
+  } else {
+    calcPortefeuille();
+    let port = DB.portefeuille[t.valeur];
+    if(!port) { alert('Stock insuffisant pour recalculer'); return; }
+    let prixNet = R2(t.prix - t.frais);
+    t.pru = port.pru;
+    t.pvBrute = R2((prixNet - t.pru) * t.qte);
+    t.taxe = t.pvBrute>0? R2inf(t.pvBrute * 0.15) : 0;
+    t.pvNette = R2(t.pvBrute - t.taxe);
+    t.netEncaisse = R2(prixNet * t.qte - t.taxe);
+  }
+
+  save();
+  closeModal();
+  renderHistorique();
+}
+
+load();
+</script>
+</body>
+</html>
