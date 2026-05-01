@@ -704,31 +704,47 @@ function saveEdit() {
   renderHistorique();
 }
 
+const TWELVE_API_KEY = "d0b84fb2bffe4725b30ddc2500fd4ee3";
+
 async function majCours(type) {
   let valeurs = Object.keys(DB.portefeuille);
   if(valeurs.length==0) return alert('Portefeuille vide');
-  DB.coursYahoo = {date: new Date().toLocaleString('fr-FR')};
+  DB.coursYahoo = {date: new Date().toLocaleString()};
 
   for(let v of valeurs){
     try{
-      let ticker = v.includes('.') ? v : v + '.CS';
-      let apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`;
-      let res = await fetch(`https://corsproxy.io/?${encodeURIComponent(apiUrl)}`);
-      let json = await res.json();
-      let meta = json.chart.result[0].meta;
-      let quote = json.chart.result[0].indicators.quote[0];
-      let closes = quote.close.filter(c=>c!=null);
-      let veille = closes.length>1? closes[closes.length-2] : meta.previousClose;
-      let tempsreel = meta.regularMarketPrice;
-
-      if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-      if(type=='veille') DB.coursYahoo[v].veille = veille;
-      if(type=='tempsreel') DB.coursYahoo[v].tempsreel = tempsreel;
+      let ticker = v.includes('.')? v : v; // Twelve Data prend AAPL, MSFT direct
+      
+      if(type=='veille'){
+        // Cours de clôture de la veille avec Twelve Data
+        const url = `https://api.twelvedata.com/previous_close?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
+        DB.coursYahoo[v].veille = data.previous_close? parseFloat(data.previous_close) : null;
+        
+      } else if(type=='tempsreel'){
+        // Cours temps réel avec Twelve Data
+        const url = `https://api.twelvedata.com/price?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
+        DB.coursYahoo[v].tempsreel = data.price? parseFloat(data.price) : null;
+      }
+      
     }catch(e){
+      console.error("Erreur Twelve Data pour", v, e);
       if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
       DB.coursYahoo[v][type] = null;
     }
   }
+  
+  save();
+  closeModal();
+  renderHistorique();
+}
   save();
   document.getElementById('dateMaj').textContent = DB.coursYahoo.date;
   renderMaj();
