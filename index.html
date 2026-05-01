@@ -743,22 +743,6 @@ async function majCours(type) {
   closeModal();
   renderHistorique();
 }
-      
-    }catch(e){
-      console.error("Erreur Twelve Data pour", v, e);
-      if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-      DB.coursYahoo[v][type] = null;
-    }
-  }
-  
-  save();
-  closeModal();
-  renderHistorique();
-}
-  save();
-  document.getElementById('dateMaj').textContent = DB.coursYahoo.date;
-  renderMaj();
-}
 
 function renderMaj() {
   if(!DB.coursYahoo.date) {
