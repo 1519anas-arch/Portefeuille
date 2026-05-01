@@ -710,67 +710,43 @@ async function majCours(type) {
   let valeurs = Object.keys(DB.portefeuille);
   if(valeurs.length==0) return alert('Portefeuille vide');
   DB.coursYahoo = {date: new Date().toLocaleString()};
+  
+  const mapTickers = {'ATTIJARIWAFA BANK':'ATW.MA','BCP':'BCP.MA','BANK OF AFRICA':'BOA.MA','BMCI':'BCI.MA','CDM':'CDM.MA','CIH':'CIH.MA','IAM':'IAM.MA','HPS':'HPS.MA','DISWAY':'DWY.MA','IB MAROC.COM':'IBMC.MA','M2M GROUP':'M2M.MA','S2M':'S2M.MA','LAFARGEHOLCIM MAR':'LHM.MA','TGCC':'TGC.MA','ALLIANCES':'ADH.MA','RESIDENCES DAR SAA':'RDS.MA','ARADEI CAPITAL':'ARD.MA','JET CONTRACTORS':'JET.MA','STROC INDUSTRIE':'STI.MA','SONASID':'SID.MA','ALUMINIUM DU MAROC':'ALM.MA','AFRIQUIA GAZ':'GAZ.MA','TAQA MOROCCO':'TQM.MA','TOTALENERGIES MAR':'TMA.MA','MANAGEM':'MNG.MA','SMI':'SMI.MA','CMT':'CMT.MA','COSUMAR':'CSR.MA','LESIEUR CRISTAL':'LES.MA','CENTRALE DANONE':'DAN.MA','CARTIER SAADA':'CDA.MA','UNIMER':'UMR.MA','LABEL VIE':'LBV.MA','AUTO-HALL':'ATH.MA','ENNAKL':'NAK.MA','AUTO NEJMA':'NEJ.MA','FENIE BROSSETTE':'FBR.MA','REALISATIONS MECA':'RMA.MA','SNA':'SNA.MA','WAFA ASSURANCE':'WAA.MA','ATLANTA':'ATL.MA','SANAD':'SAN.MA','AGMA':'AGM.MA','DELTA HOLDING':'DHO.MA','DIAC SALAF':'DIA.MA','INVESTOR CAPITAL':'INV.MA','BALIMA':'BAL.MA','DARI COUSPATE':'DRI.MA','MED PAPER':'MDP.MA','MICRODATA':'MIC.MA','PROMOPHARM':'PRO.MA','RISMA':'RIS.MA','SALAFIN':'SAL.MA','SOTHEMA':'SOT.MA','STOKVIS NORD AFR':'SNAF.MA','TIMAR':'TIM.MA','ZELLIDJA S.A':'ZEL.MA','MAGHREB OXYGENE':'MOX.MA','SNEP':'SNE.MA','COLORADO':'COL.MA','CTM':'CTM.MA','MARSA MAROC':'MSA.MA','LYDEC':'LYD.MA','CIMENTS DU MAROC':'CIM.MA','BMCE CAPITAL':'BCE.MA','EQDOM':'EQD.MA','MAGHREBAIL':'MAB.MA','MAROC LEASING':'MLE.MA'};
 
   for(let v of valeurs){
     try{
-      let ticker = v;
+      let ticker = mapTickers[v] || v;
       
       if(type=='veille'){
-        const url = `https://api.twelvedata.com/previous_close?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
+        const url = `https://api.twelvedata.com/quote?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
+        console.log(`${v} -> ${ticker}:`, data);
         
         if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-        DB.coursYahoo[v].veille = data.previous_close? parseFloat(data.previous_close) : null;
+        DB.coursYahoo[v].veille = data.previous_close;
         
       } else if(type=='tempsreel'){
-        const url = `https://api.twelvedata.com/price?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
+        const url = `https://api.twelvedata.com/quote?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
+        console.log(`${v} -> ${ticker}:`, data);
         
         if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-        DB.coursYahoo[v].tempsreel = data.price? parseFloat(data.price) : null;
+        DB.coursYahoo[v].tempsreel = data.close;
       }
+      
+      await new Promise(r => setTimeout(r, 8000));
       
     }catch(e){
       console.error("Erreur Twelve Data pour", v, e);
-      if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-      DB.coursYahoo[v][type] = null;
+      if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {veille:0, tempsreel:0};
     }
   }
   
-  save();
-  closeModal();
-  renderHistorique();
+  saveDB();
+  renderPortefeuille();
 }
-
-function renderMaj() {
-  if(!DB.coursYahoo.date) {
-    document.getElementById('tableMaj').innerHTML = '<p style="font-size:12px;color:#666">Clique sur Cours Veille ou Temps Réel pour charger</p>';
-    return;
-  }
-  let html = '<table><tr><th>Valeur</th><th>Qté</th><th>PRU</th><th>Cours Veille</th><th>+/- Latente V</th><th>Cours T.Réel</th><th>+/- Latente TR</th></tr>';
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let p = DB.portefeuille[v];
-    let c = DB.coursYahoo[v] || {};
-    let cv = c.veille || 0;
-    let ctr = c.tempsreel || 0;
-    let latV = cv? R2((cv - p.pru) * p.qte) : 0;
-    let latTR = ctr? R2((ctr - p.pru) * p.qte) : 0;
-    html += `<tr>
-      <td>${v}</td>
-      <td>${p.qte}</td>
-      <td>${fmt(p.pru)}</td>
-      <td>${cv?fmt(cv):'-'}</td>
-      <td class="${latV>=0?'green':'red'}">${cv?fmt(latV):'-'}</td>
-      <td>${ctr?fmt(ctr):'-'}</td>
-      <td class="${latTR>=0?'green':'red'}">${ctr?fmt(latTR):'-'}</td>
-    </tr>`;
-  });
-  document.getElementById('tableMaj').innerHTML = html + '</table>';
-}
-
-load();
 </script>
 </body>
 </html>
