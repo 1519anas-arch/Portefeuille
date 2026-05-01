@@ -713,10 +713,9 @@ async function majCours(type) {
 
   for(let v of valeurs){
     try{
-      let ticker = v.includes('.')? v : v; // Twelve Data prend AAPL, MSFT direct
+      let ticker = v;
       
       if(type=='veille'){
-        // Cours de clôture de la veille avec Twelve Data
         const url = `https://api.twelvedata.com/previous_close?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
@@ -725,7 +724,6 @@ async function majCours(type) {
         DB.coursYahoo[v].veille = data.previous_close? parseFloat(data.previous_close) : null;
         
       } else if(type=='tempsreel'){
-        // Cours temps réel avec Twelve Data
         const url = `https://api.twelvedata.com/price?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
@@ -733,6 +731,18 @@ async function majCours(type) {
         if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
         DB.coursYahoo[v].tempsreel = data.price? parseFloat(data.price) : null;
       }
+      
+    }catch(e){
+      console.error("Erreur Twelve Data pour", v, e);
+      if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
+      DB.coursYahoo[v][type] = null;
+    }
+  }
+  
+  save();
+  closeModal();
+  renderHistorique();
+}
       
     }catch(e){
       console.error("Erreur Twelve Data pour", v, e);
