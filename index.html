@@ -712,7 +712,8 @@ async function majCours(type) {
   for(let v of valeurs){
     try{
       let ticker = v + '.CS';
-      let res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`);
+      let url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`;
+      let res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
       let json = await res.json();
       let meta = json.chart.result[0].meta;
       let quote = json.chart.result[0].indicators.quote[0];
