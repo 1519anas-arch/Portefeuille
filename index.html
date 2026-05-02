@@ -20,6 +20,9 @@ body{background:var(--bg);color:#333;padding:12px;min-height:100vh}
 .btn-green{background:var(--green)}
 input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px;margin:6px 0}
 label{font-size:13px;color:#666;margin-top:8px;display:block}
+.ligne-valeur{display:flex;justify-content:space-between;align-items:center;margin:2px 0;}
+.ligne-valeur .label{font-size:12px;color:#666;}
+.ligne-valeur .montant{font-size:14px;font-weight:600;}
 .card{background:var(--card);border-radius:16px;padding:12px;margin:8px 0;box-shadow:var(--shadow)}
 .card-dark{background:var(--dark);color:#fff;text-align:center}
 h1{font-size:20px;margin-bottom:4px}
@@ -41,7 +44,7 @@ th{font-size:11px;color:#666;font-weight:600}
 .zone-historique{grid-column:2;grid-row:3;min-height:60px}
 .zone-maj{grid-column:3;grid-row:3;min-height:60px}
 .zone-bas{grid-column:1/4;background:var(--card)}
-.basmala{font-family:'Amiri Quran',serif;font-size:11px;line-height:1.2;text-align:center;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;padding:4px;}
+.basmala{font-family:'Amiri Quran',serif;font-size:13px;line-height:1.2;text-align:center;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;padding:4px;}
 .profit-line{font-size:16px;font-weight:600}
 .nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
@@ -302,22 +305,34 @@ function renderPortefeuille() {
     let latent = R2((cours - p.pru) * p.qte);
     totalGlobal += valPRU;
     totalLatent += valGlobal;
-    html += `<div class="card">
-      <div style="display:flex;justify-content:space-between"><h2>${v}</h2><div style="font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea">${p.qte} titres</div></div>
-      <div class="grid3">
-        <div><div style="font-size:12px;color:#666">PRU</div><div style="font-size:16px;font-weight:600">${fmt(p.pru)}</div></div>
-        <div><div style="font-size:12px;color:#666">Cours</div><div style="font-size:16px;font-weight:600">${fmt(cours)}</div></div>
-        <div><div style="font-size:12px;color:#666">Latent</div><div style="font-size:16px;font-weight:600" class="${latent>=0?'green':'red'}">${fmt(latent)}</div></div>
-      </div>
-      <div style="font-size:11px;color:#666;margin-top:8px">Valeur: ${fmt(valGlobal)} MAD</div>
-    </div>`;
+     html += `<div class="card">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+      <div style="font-weight:600;font-size:15px">${v}</div>
+      <div style="font-size:14px">${p.qte}</div>
+    </div>
+
+    <div class="ligne-valeur">
+      <span class="label">PRU</span>
+      <span class="montant">${R2(p.pru)}</span>
+    </div>
+
+    <div class="ligne-valeur">
+      <span class="label">Cours</span>
+    <span class="montant">${R2(cours)}</span>
+    </div>
+  
+  <div class="ligne-valeur">
+    <span class="label">Latent</span>
+    <span class="montant" style="color:${latent>=0?'#10b981':'#ef4444'}">${R2(latent)}</span>
+  </div>
+  
+  <div class="ligne-valeur">
+    <span class="label">Valeur</span>
+    <span class="montant">${R2(valGlobal)}</span>
+  </div>
+</div>`;
   });
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let p = DB.portefeuille[v];
-    let cours = DB.cours[v] || p.pru;
-    let part = totalLatent>0? R2((cours * p.qte / totalLatent) * 100) : 0;
-    html = html.replace(`>${v}</h2>`,`>${v} <span style="font-size:11px;color:#666">(${fmt(part)}%)</span></h2>`);
-  });
+  
   html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PRU</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalGlobal)} MAD</div>
   <div style="font-size:12px;opacity:.7;margin-top:8px">VALEUR ACTUELLE</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalLatent)} MAD</div></div>`;
   document.getElementById('listePortefeuille').innerHTML = html || '<div class="card">Portefeuille vide</div>';
