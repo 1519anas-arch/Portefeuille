@@ -20,7 +20,7 @@ body{background:var(--bg);color:#333;padding:12px;min-height:100vh}
 .btn-green{background:var(--green)}
 input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px;margin:6px 0}
 label{font-size:13px;color:#666;margin-top:8px;display:block}
-.card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.card{background:var(--card);border-radius:16px;padding:12px;margin:8px 0;box-shadow:var(--shadow)}
 .card-dark{background:var(--dark);color:#fff;text-align:center}
 h1{font-size:20px;margin-bottom:4px}
 h2{font-size:18px;margin-bottom:12px}
@@ -30,16 +30,16 @@ h2{font-size:18px;margin-bottom:12px}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
 th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
 th{font-size:11px;color:#666;font-weight:600}
-.boussole{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto auto;gap:10px;max-width:500px;margin:20px auto}
+.boussole{display:grid;grid-template-columns:1fr 1fr 1fr;grid-auto-rows:1fr;gap:12px}
 .zone{background:var(--card);border-radius:20px;padding:20px;text-align:center;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;min-height:90px}
 .zone:active{transform:scale(.97)}
 .zone-portefeuille{grid-column:1/4}
 .zone-vente{grid-column:1;grid-row:2}
 .zone-centre{grid-column:2;grid-row:2;background:var(--dark);color:#fff}
 .zone-achat{grid-column:3;grid-row:2}
-.zone-excel{grid-column:1;grid-row:3}
-.zone-historique{grid-column:2;grid-row:3}
-.zone-maj{grid-column:3;grid-row:3}
+.zone-excel{grid-column:1;grid-row:3;min-height:60px}
+.zone-historique{grid-column:2;grid-row:3;min-height:60px}
+.zone-maj{grid-column:3;grid-row:3;min-height:60px}
 .zone-bas{grid-column:1/4;background:var(--card)}
 .basmala{font-family:'Amiri Quran',serif;font-size:16px;line-height:1.9}
 .profit-line{font-size:16px;font-weight:600}
@@ -76,7 +76,9 @@ th{font-size:11px;color:#666;font-weight:600}
     </div>
     <label>Montant MAD</label>
     <input type="number" id="montantInvest" step="0.01" placeholder="Tape un montant positif">
-    <div class="grid2" style="margin-top:12px">
+   <label>Date de l'opération</label>
+    <input type="date" id="dateOperation" style="margin-bottom:12px">
+   <div class="grid2" style="margin-top:12px">
       <button class="btn btn-green" onclick="mouvementInvest(1)">Dépôt</button>
       <button class="btn btn-red" onclick="mouvementInvest(-1)">Retrait</button>
     </div>
@@ -110,11 +112,15 @@ th{font-size:11px;color:#666;font-weight:600}
           <tbody id="tableResumeMaj"></tbody>
         </table>
       </div>
-      <div class="card-dark" style="padding:20px;border-radius:12px;text-align:center">
-        <div style="font-size:12px;opacity:.7">TOTAL +/- LATENTE</div>
-        <div style="font-size:32px;font-weight:700;margin:8px 0" id="totalLatente">0.00 MAD</div>
-        <div style="font-size:12px;opacity:.7">VALEUR TOTALE</div>
-        <div style="font-size:24px;font-weight:700" id="valeurTotale">0.00 MAD</div>
+      <div style="border-top:1px solid #e5e5e5;padding:12px 4px 0;margin-top:12px">
+  <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px">
+    <span>TOTAL +/- LATENTE</span>
+    <span id="totalLatente" style="font-weight:700">0.00 MAD</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:14px">
+    <span>VALEUR TOTALE</span>
+    <span id="valeurTotale" style="font-weight:700">0.00 MAD</span>
+  </div>
       </div>
       <button class="btn" style="width:100%;margin-top:12px" onclick="renderMaj()">Modifier</button>
     </div>
@@ -269,10 +275,12 @@ function mouvementInvest(signe) {
   let m = parseFloat(document.getElementById('montantInvest').value);
   if(!m || m<=0) return alert('Tape un montant positif');
   let montant = R2(m * signe);
-  DB.mouvements.push({date:new Date().toISOString().split('T')[0], montant:montant});
+  let date = document.getElementById('dateOperation').value || new Date().toISOString().split('T')[0];
+  DB.mouvements.push({date:date, montant:montant});
   DB.invest = R2(DB.invest + montant);
   save();
   renderInvest();
+  document.getElementById('dateOperation').value = '';
   document.getElementById('montantInvest').value = '';
 }
 
