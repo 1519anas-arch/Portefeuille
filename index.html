@@ -1,16 +1,13 @@
+Voilà le code
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portefeuille</title>
+<title>Portefeuille Bourse MAD</title>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <style>
-@font-face {
-  font-family: 'UthmanicHafs';
-  src: url('https://qurancomplex.gov.sa/wp-content/themes/twentyseventeen/fonts/UthmanicHafs1Ver18.ttf') format('truetype');
-}
-:root {--bg:#f5f5f5;--card:#fff;--dark:#1a1a1a;--accent:#007aff;--green:#34c759;--red:#ff3b30;--orange:#ff9500;--purple:#5856d6;--cyan:#32ade6;--shadow:0 4px 12px rgba(0,0,0,.1)}
+:root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--accent:#007aff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.1)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
 body{background:var(--bg);color:#333;padding:16px;min-height:100vh;background-size:cover;background-position:center;background-attachment:fixed}
 .hide{display:none!important}
@@ -35,19 +32,16 @@ h3{font-size:14px;color:#666;margin:16px 0 8px}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
 th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
 th{font-size:11px;color:#666;font-weight:600}
-.boussole{display:grid;grid-template-areas:"haut haut haut" "gauche centre droite" "bas1 bas2 maj";gap:12px;max-width:400px;margin:20px auto}
+.boussole{display:grid;grid-template-areas:"haut haut haut" "gauche centre droite" "bas1 bas1 bas2";gap:12px;max-width:400px;margin:40px auto}
 .zone{padding:20px;border-radius:16px;text-align:center;font-weight:600;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
 .zone:active{transform:scale(.97)}
-.centre{grid-area:centre;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:center;padding:10px}
+.centre{grid-area:centre;background:var(--dark);color:#fff}
 .haut{grid-area:haut;background:var(--card)}.gauche{grid-area:gauche;background:var(--card)}
-.droite{grid-area:droite;background:var(--card)}.bas1{grid-area:bas1;background:var(--card)}
-.bas2{grid-area:bas2;background:var(--card)}.maj{grid-area:maj;background:var(--card)}
+.droite{grid-area:droite;background:var(--card)}.bas1{grid-area:bas1;background:var(--card)}.bas2{grid-area:bas2;background:var(--card)}
 .montant{font-size:28px;font-weight:700;margin:8px 0}
 .nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
 .modal-content{background:var(--card);padding:20px;border-radius:16px;width:90%;max-width:400px}
-.basmala{font-family:'UthmanicHafs',serif;font-size:1.1rem;line-height:1.8;color:#fff;text-align:center;direction:rtl}
-.profit-bar{background:var(--card);border-radius:16px;padding:12px;margin:0 auto 20px;max-width:400px;text-align:center;box-shadow:var(--shadow);font-weight:600;font-size:14px}
 </style>
 </head>
 <body>
@@ -57,21 +51,18 @@ th{font-size:11px;color:#666;font-weight:600}
     <div class="zone haut" onclick="showEcran('portefeuille')">Portefeuille</div>
     <div class="zone gauche" onclick="showEcran('vente')">Vente</div>
     <div class="zone centre" onclick="showEcran('invest')">
-      <div class="basmala">باسم الله الرحمن الرحيم والصلاة والسلام على أشرف المرسلين</div>
+      <div style="font-size:12px;opacity:.7">PROFIT NET GLOBAL</div>
+      <div class="montant" id="profitGlobal">0.00 MAD</div>
+      <div style="font-size:12px;opacity:.7">Solde: <span id="soldeGlobal">0.00</span> MAD</div>
     </div>
     <div class="zone droite" onclick="showEcran('achat')">Achat</div>
     <div class="zone bas1" onclick="showEcran('excel')">Excel</div>
     <div class="zone bas2" onclick="showEcran('historique')">Historique</div>
-    <div class="zone maj" onclick="showEcran('maj')">MÀJ</div>
-  </div>
-  <div class="profit-bar">
-    <span class="green">PROFIT NET GLOBAL: <span id="profitGlobal">0.00</span> MAD</span> |
-    <span>Solde: <span id="soldeGlobal">0.00</span> MAD</span>
   </div>
 </div>
 
 <div id="ecranInvest" class="hide">
-  <div class="nav-top"><div></div><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Investissement</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
     <div class="card-dark" style="margin-bottom:12px">
       <div style="font-size:12px;opacity:.7">SOLDE DISPONIBLE</div>
@@ -89,12 +80,12 @@ th{font-size:11px;color:#666;font-weight:600}
 </div>
 
 <div id="ecranPortefeuille" class="hide">
-  <div class="nav-top"><div></div><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Portefeuille</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div id="listePortefeuille"></div>
 </div>
 
 <div id="ecranAchat" class="hide">
-  <div class="nav-top"><div></div><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Achat</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
     <label>Valeur</label>
     <select id="valeurAchat" onchange="toggleAutreAchat()"></select>
@@ -115,7 +106,7 @@ th{font-size:11px;color:#666;font-weight:600}
 </div>
 
 <div id="ecranVente" class="hide">
-  <div class="nav-top"><div></div><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Vente</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
     <label>Valeur en stock</label><select id="valeurVente" onchange="updateStock()"></select>
     <div class="badge">Stock: <span id="stockDispo">0</span> | PRU: <span id="pruVente">0.00</span></div>
@@ -133,7 +124,7 @@ th{font-size:11px;color:#666;font-weight:600}
 </div>
 
 <div id="ecranExcel" class="hide">
-  <div class="nav-top"><div></div><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Excel</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
     <h2>Importer</h2>
     <p style="font-size:12px;color:#666">Format: DATE | TYPE | VALEUR | QTE | PRIX | COUT<br>Accepte 1 000,00 et 1000.00 | COUT=0.11 pour 0.11%</p>
@@ -155,7 +146,7 @@ th{font-size:11px;color:#666;font-weight:600}
 </div>
 
 <div id="ecranHistorique" class="hide">
-  <div class="nav-top"><div></div><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Historique</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
     <label>Type</label>
     <select id="filtreType" onchange="renderHistorique()">
@@ -165,8 +156,6 @@ th{font-size:11px;color:#666;font-weight:600}
     </select>
     <label>Valeur</label>
     <select id="filtreValeur" onchange="renderHistorique()"></select>
-    <label>Date exacte</label>
-    <input type="date" id="filtreDateExact" onchange="renderHistorique()">
     <label>Période</label>
     <select id="filtreDate" onchange="renderHistorique()">
       <option value="">Toutes</option>
@@ -174,21 +163,7 @@ th{font-size:11px;color:#666;font-weight:600}
       <option value="mois">Ce mois</option>
       <option value="annee">Cette année</option>
     </select>
-    <button class="btn btn-grey btn-small" onclick="document.getElementById('filtreDateExact').value='';document.getElementById('filtreDate').value='';renderHistorique()">Reset filtres</button>
     <div class="table-wrap" style="margin-top:12px" id="tableHistorique"></div>
-  </div>
-</div>
-
-<div id="ecranMaj" class="hide">
-  <div class="nav-top"><div></div><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
-  <div class="card">
-    <h2>Mise à jour Cours Yahoo</h2>
-    <p style="font-size:12px;color:#666">MAJ: <span id="dateMaj">Jamais</span></p>
-    <div class="grid2" style="margin:12px 0">
-      <button class="btn" onclick="majCours('veille')">Cours Veille</button>
-      <button class="btn" onclick="majCours('tempsreel')">Temps Réel</button>
-    </div>
-    <div class="table-wrap" id="tableMaj"></div>
   </div>
 </div>
 
@@ -210,7 +185,7 @@ th{font-size:11px;color:#666;font-weight:600}
 </div>
 
 <script>
-let DB = {invest:0, mouvements:[], transactions:[], background:'', coursYahoo:{}};
+let DB = {invest:0, mouvements:[], transactions:[], background:''};
 const R2 = x => Math.round(x*100)/100;
 const R2inf = x => Math.floor(x*100)/100;
 const fmt = x => R2(x).toFixed(2);
@@ -222,7 +197,6 @@ function load() {
   updateAll();
   document.getElementById('dateAchat').valueAsDate = new Date();
   document.getElementById('dateVente').valueAsDate = new Date();
-  if(DB.coursYahoo.date) document.getElementById('dateMaj').textContent = DB.coursYahoo.date;
 }
 
 function save() {
@@ -269,7 +243,7 @@ function updateAll() {
 }
 
 function showEcran(nom) {
-  ['boussole','invest','portefeuille','achat','vente','excel','historique','maj'].forEach(e=>{
+  ['boussole','invest','portefeuille','achat','vente','excel','historique'].forEach(e=>{
     document.getElementById('ecran'+e.charAt(0).toUpperCase()+e.slice(1)).classList.add('hide');
   });
   document.getElementById('ecran'+nom.charAt(0).toUpperCase()+nom.slice(1)).classList.remove('hide');
@@ -277,7 +251,6 @@ function showEcran(nom) {
   if(nom=='historique') renderHistorique();
   if(nom=='invest') renderInvest();
   if(nom=='vente') updateStock();
-  if(nom=='maj') renderMaj();
 }
 
 function calcPortefeuille() {
@@ -314,9 +287,9 @@ function getSolde() {
 function updateBoussole() {
   let pvNette = DB.transactions.filter(t=>t.type=='VENTE').reduce((s,t)=>s+t.pvNette,0);
   let solde = getSolde();
-  document.getElementById('profitGlobal').textContent = fmt(pvNette);
+  document.getElementById('profitGlobal').textContent = fmt(pvNette)+' MAD';
   document.getElementById('soldeGlobal').textContent = fmt(solde);
-  document.getElementById('profitGlobal').className = pvNette>=0?'green':'red';
+  document.getElementById('profitGlobal').className = 'montant '+(pvNette>=0?'green':'red');
 }
 
 function mouvementInvest(signe) {
@@ -337,20 +310,21 @@ function renderInvest() {
 }
 
 function renderPortefeuille() {
-  let html = '<div class="table-wrap"><table><tr><th>Valeur</th><th>Qté</th><th>PRU</th><th>Valeur Globale</th><th>Part %</th></tr>';
+  let html = '';
   let totalGlobal = 0;
   Object.keys(DB.portefeuille).forEach(v=>{
     let p = DB.portefeuille[v];
     let valGlobal = p.pru * p.qte;
     totalGlobal += valGlobal;
+    html += `<div class="card">
+      <div style="display:flex;justify-content:space-between"><h2>${v}</h2><div class="badge">${p.qte} titres</div></div>
+      <div class="grid2">
+        <div><div style="font-size:12px;color:#666">PRU unitaire</div><div style="font-size:18px;font-weight:600">${fmt(p.pru)}</div></div>
+        <div><div style="font-size:12px;color:#666">Valeur globale</div><div style="font-size:18px;font-weight:600">${fmt(valGlobal)}</div></div>
+      </div>
+    </div>`;
   });
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let p = DB.portefeuille[v];
-    let valGlobal = p.pru * p.qte;
-    let part = totalGlobal>0? R2(valGlobal/totalGlobal*100) : 0;
-    html += `<tr><td>${v}</td><td>${p.qte}</td><td>${fmt(p.pru)}</td><td>${fmt(valGlobal)}</td><td>${fmt(part)}%</td></tr>`;
-  });
-  html += `<tr style="font-weight:700"><td>TOTAL</td><td></td><td></td><td>${fmt(totalGlobal)}</td><td>100.00%</td></tr></table></div>`;
+  html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PORTEFEUILLE</div><div class="montant">${fmt(totalGlobal)} MAD</div></div>`;
   document.getElementById('listePortefeuille').innerHTML = html || '<div class="card">Portefeuille vide</div>';
 }
 
@@ -496,6 +470,7 @@ function getExportData() {
   return data;
 }
 
+// CORRECTIF POCO X3 MIUI : Blob au lieu de base64
 function exportExcel() {
   let data = getExportData();
   let ws = XLSX.utils.aoa_to_sheet(data);
@@ -524,6 +499,7 @@ function exportCSV() {
   link.click();
 }
 
+// CORRECTIF IMPORT : Tri par date + recalcul stock temps réel + fix dates Excel
 function importExcel() {
   let file = document.getElementById('fileInput').files[0];
   if(!file) return alert('Choisir fichier');
@@ -602,13 +578,11 @@ function importExcel() {
 function triHistorique() {
   let fType = document.getElementById('filtreType').value;
   let fVal = document.getElementById('filtreValeur').value;
-  let fDateExact = document.getElementById('filtreDateExact').value;
   let fDate = document.getElementById('filtreDate').value;
   let data = DB.transactions.filter(t=>{
     if(fType && t.type!=fType) return false;
     if(fVal && t.valeur!=fVal) return false;
-    if(fDateExact && t.date!=fDateExact) return false;
-    if(fDate &&!fDateExact) {
+    if(fDate) {
       let d = new Date(t.date);
       let now = new Date();
       if(fDate=='semaine') {
@@ -702,78 +676,6 @@ function saveEdit() {
   save();
   closeModal();
   renderHistorique();
-}
-
-const TWELVE_API_KEY = "d0b84fb2bffe4725b30ddc2500fd4ee3";
-
-async function majCours(type) {
-  let valeurs = Object.keys(DB.portefeuille);
-  if(valeurs.length==0) return alert('Portefeuille vide');
-  DB.coursYahoo = {date: new Date().toLocaleString()};
-
-  for(let v of valeurs){
-    try{
-      let ticker = v.includes('.')? v : v; // Twelve Data prend AAPL, MSFT direct
-      
-      if(type=='veille'){
-        // Cours de clôture de la veille avec Twelve Data
-        const url = `https://api.twelvedata.com/previous_close?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        
-        if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-        DB.coursYahoo[v].veille = data.previous_close? parseFloat(data.previous_close) : null;
-        
-      } else if(type=='tempsreel'){
-        // Cours temps réel avec Twelve Data
-        const url = `https://api.twelvedata.com/price?symbol=${ticker}&apikey=${TWELVE_API_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        
-        if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-        DB.coursYahoo[v].tempsreel = data.price? parseFloat(data.price) : null;
-      }
-      
-    }catch(e){
-      console.error("Erreur Twelve Data pour", v, e);
-      if(!DB.coursYahoo[v]) DB.coursYahoo[v] = {};
-      DB.coursYahoo[v][type] = null;
-    }
-  }
-  
-  save();
-  closeModal();
-  renderHistorique();
-}
-  save();
-  document.getElementById('dateMaj').textContent = DB.coursYahoo.date;
-  renderMaj();
-}
-
-function renderMaj() {
-  if(!DB.coursYahoo.date) {
-    document.getElementById('tableMaj').innerHTML = '<p style="font-size:12px;color:#666">Clique sur Cours Veille ou Temps Réel pour charger</p>';
-    return;
-  }
-  let html = '<table><tr><th>Valeur</th><th>Qté</th><th>PRU</th><th>Cours Veille</th><th>+/- Latente V</th><th>Cours T.Réel</th><th>+/- Latente TR</th></tr>';
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let p = DB.portefeuille[v];
-    let c = DB.coursYahoo[v] || {};
-    let cv = c.veille || 0;
-    let ctr = c.tempsreel || 0;
-    let latV = cv? R2((cv - p.pru) * p.qte) : 0;
-    let latTR = ctr? R2((ctr - p.pru) * p.qte) : 0;
-    html += `<tr>
-      <td>${v}</td>
-      <td>${p.qte}</td>
-      <td>${fmt(p.pru)}</td>
-      <td>${cv?fmt(cv):'-'}</td>
-      <td class="${latV>=0?'green':'red'}">${cv?fmt(latV):'-'}</td>
-      <td>${ctr?fmt(ctr):'-'}</td>
-      <td class="${latTR>=0?'green':'red'}">${ctr?fmt(latTR):'-'}</td>
-    </tr>`;
-  });
-  document.getElementById('tableMaj').innerHTML = html + '</table>';
 }
 
 load();
