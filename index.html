@@ -1,10 +1,12 @@
-Voilà le code
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Portefeuille Bourse MAD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <style>
 :root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--accent:#007aff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.1)}
@@ -29,16 +31,17 @@ h3{font-size:14px;color:#666;margin:16px 0 8px}
 .badge{font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea;display:inline-block}
 .green{color:var(--green)}.red{color:var(--red)}
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
 th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
 th{font-size:11px;color:#666;font-weight:600}
-.boussole{display:grid;grid-template-areas:"haut haut haut" "gauche centre droite" "bas1 bas1 bas2";gap:12px;max-width:400px;margin:40px auto}
+.boussole{display:grid;grid-template-areas:"haut haut haut" "gauche centre droite" "bas bas bas";gap:12px;max-width:420px;margin:40px auto}
 .zone{padding:20px;border-radius:16px;text-align:center;font-weight:600;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
 .zone:active{transform:scale(.97)}
-.centre{grid-area:centre;background:var(--dark);color:#fff}
+.centre{grid-area:centre;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:center}
 .haut{grid-area:haut;background:var(--card)}.gauche{grid-area:gauche;background:var(--card)}
-.droite{grid-area:droite;background:var(--card)}.bas1{grid-area:bas1;background:var(--card)}.bas2{grid-area:bas2;background:var(--card)}
+.droite{grid-area:droite;background:var(--card)}.bas{grid-area:bas;background:var(--card)}
 .montant{font-size:28px;font-weight:700;margin:8px 0}
+.basmala{font-family:'Amiri Quran',serif;font-size:16px;line-height:1.8}
 .nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
 .modal-content{background:var(--card);padding:20px;border-radius:16px;width:90%;max-width:400px}
@@ -48,21 +51,34 @@ th{font-size:11px;color:#666;font-weight:600}
 
 <div id="ecranBoussole">
   <div class="boussole">
-    <div class="zone haut" onclick="showEcran('portefeuille')">Portefeuille</div>
-    <div class="zone gauche" onclick="showEcran('vente')">Vente</div>
-    <div class="zone centre" onclick="showEcran('invest')">
-      <div style="font-size:12px;opacity:.7">PROFIT NET GLOBAL</div>
-      <div class="montant" id="profitGlobal">0.00 MAD</div>
-      <div style="font-size:12px;opacity:.7">Solde: <span id="soldeGlobal">0.00</span> MAD</div>
+    <div class="zone haut">
+      <div class="grid2">
+        <button class="btn" onclick="showEcran('achat')">Achat</button>
+        <button class="btn btn-red" onclick="showEcran('vente')">Vente</button>
+      </div>
     </div>
-    <div class="zone droite" onclick="showEcran('achat')">Achat</div>
-    <div class="zone bas1" onclick="showEcran('excel')">Excel</div>
-    <div class="zone bas2" onclick="showEcran('historique')">Historique</div>
+    <div class="zone gauche">
+      <div class="grid2">
+        <button class="btn btn-grey" onclick="showEcran('excel')">Excel</button>
+        <button class="btn btn-grey" onclick="showEcran('historique')">Historique</button>
+      </div>
+    </div>
+    <div class="zone centre" onclick="showEcran('invest')">
+      <div class="basmala">باسم الله الرحمن الرحيم والصلاة والسلام على أشرف المرسلين</div>
+    </div>
+    <div class="zone droite">
+      <div class="grid2">
+        <button class="btn" onclick="showEcran('portefeuille')">Portefeuille</button>
+        <button class="btn btn-grey" onclick="showEcran('maj')">MÀJ</button>
+      </div>
+    <div class="zone bas">
+      <div style="font-size:12px;color:#666">PROFIT NET GLOBAL: <span id="profitGlobal" class="green">0.00 MAD</span> | SOLDE: <span id="soldeGlobal">0.00 MAD</span></div>
+    </div>
   </div>
 </div>
 
 <div id="ecranInvest" class="hide">
-  <div class="nav-top"><h1>Investissement</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Dépôt / Retrait</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
     <div class="card-dark" style="margin-bottom:12px">
       <div style="font-size:12px;opacity:.7">SOLDE DISPONIBLE</div>
@@ -82,6 +98,15 @@ th{font-size:11px;color:#666;font-weight:600}
 <div id="ecranPortefeuille" class="hide">
   <div class="nav-top"><h1>Portefeuille</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div id="listePortefeuille"></div>
+</div>
+
+<div id="ecranMaj" class="hide">
+  <div class="nav-top"><h1>Mise à jour Cours</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="card">
+    <p style="font-size:12px;color:#666;margin-bottom:12px">Saisis le cours actuel pour chaque valeur. Laisse vide si pas de changement.</p>
+    <div id="listeMaj"></div>
+    <button class="btn" style="width:100%;margin-top:12px" onclick="saveMaj()">Enregistrer les cours</button>
+  </div>
 </div>
 
 <div id="ecranAchat" class="hide">
@@ -156,13 +181,8 @@ th{font-size:11px;color:#666;font-weight:600}
     </select>
     <label>Valeur</label>
     <select id="filtreValeur" onchange="renderHistorique()"></select>
-    <label>Période</label>
-    <select id="filtreDate" onchange="renderHistorique()">
-      <option value="">Toutes</option>
-      <option value="semaine">Cette semaine</option>
-      <option value="mois">Ce mois</option>
-      <option value="annee">Cette année</option>
-    </select>
+    <label>Date précise</label>
+    <input type="date" id="filtreDate" onchange="renderHistorique()">
     <div class="table-wrap" style="margin-top:12px" id="tableHistorique"></div>
   </div>
 </div>
@@ -185,7 +205,7 @@ th{font-size:11px;color:#666;font-weight:600}
 </div>
 
 <script>
-let DB = {invest:0, mouvements:[], transactions:[], background:''};
+let DB = {invest:0, mouvements:[], transactions:[], background:'', cours:{}};
 const R2 = x => Math.round(x*100)/100;
 const R2inf = x => Math.floor(x*100)/100;
 const fmt = x => R2(x).toFixed(2);
@@ -193,6 +213,7 @@ const fmt = x => R2(x).toFixed(2);
 function load() {
   let d = localStorage.getItem('pfbourse');
   if(d) DB = JSON.parse(d);
+  if(!DB.cours) DB.cours = {};
   applyBackground();
   updateAll();
   document.getElementById('dateAchat').valueAsDate = new Date();
@@ -243,7 +264,7 @@ function updateAll() {
 }
 
 function showEcran(nom) {
-  ['boussole','invest','portefeuille','achat','vente','excel','historique'].forEach(e=>{
+  ['boussole','invest','portefeuille','achat','vente','excel','historique','maj'].forEach(e=>{
     document.getElementById('ecran'+e.charAt(0).toUpperCase()+e.slice(1)).classList.add('hide');
   });
   document.getElementById('ecran'+nom.charAt(0).toUpperCase()+nom.slice(1)).classList.remove('hide');
@@ -251,6 +272,7 @@ function showEcran(nom) {
   if(nom=='historique') renderHistorique();
   if(nom=='invest') renderInvest();
   if(nom=='vente') updateStock();
+  if(nom=='maj') renderMaj();
 }
 
 function calcPortefeuille() {
@@ -289,7 +311,7 @@ function updateBoussole() {
   let solde = getSolde();
   document.getElementById('profitGlobal').textContent = fmt(pvNette)+' MAD';
   document.getElementById('soldeGlobal').textContent = fmt(solde);
-  document.getElementById('profitGlobal').className = 'montant '+(pvNette>=0?'green':'red');
+  document.getElementById('profitGlobal').className = pvNette>=0?'green':'red';
 }
 
 function mouvementInvest(signe) {
@@ -312,20 +334,54 @@ function renderInvest() {
 function renderPortefeuille() {
   let html = '';
   let totalGlobal = 0;
+  let totalLatent = 0;
   Object.keys(DB.portefeuille).forEach(v=>{
     let p = DB.portefeuille[v];
-    let valGlobal = p.pru * p.qte;
-    totalGlobal += valGlobal;
+    let cours = DB.cours[v] || p.pru;
+    let valGlobal = cours * p.qte;
+    let valPRU = p.pru * p.qte;
+    let latent = R2((cours - p.pru) * p.qte);
+    let part = 0;
+    totalGlobal += valPRU;
+    totalLatent += valGlobal;
     html += `<div class="card">
       <div style="display:flex;justify-content:space-between"><h2>${v}</h2><div class="badge">${p.qte} titres</div></div>
-      <div class="grid2">
-        <div><div style="font-size:12px;color:#666">PRU unitaire</div><div style="font-size:18px;font-weight:600">${fmt(p.pru)}</div></div>
-        <div><div style="font-size:12px;color:#666">Valeur globale</div><div style="font-size:18px;font-weight:600">${fmt(valGlobal)}</div></div>
+      <div class="grid3">
+        <div><div style="font-size:12px;color:#666">PRU</div><div style="font-size:16px;font-weight:600">${fmt(p.pru)}</div></div>
+        <div><div style="font-size:12px;color:#666">Cours</div><div style="font-size:16px;font-weight:600">${fmt(cours)}</div></div>
+        <div><div style="font-size:12px;color:#666">Latent</div><div style="font-size:16px;font-weight:600" class="${latent>=0?'green':'red'}">${fmt(latent)}</div></div>
       </div>
+      <div style="font-size:11px;color:#666;margin-top:8px">Valeur: ${fmt(valGlobal)} MAD</div>
     </div>`;
   });
-  html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PORTEFEUILLE</div><div class="montant">${fmt(totalGlobal)} MAD</div></div>`;
+  Object.keys(DB.portefeuille).forEach(v=>{
+    let p = DB.portefeuille[v];
+    let cours = DB.cours[v] || p.pru;
+    let part = totalLatent>0? R2((cours * p.qte / totalLatent) * 100) : 0;
+    html = html.replace(`>${v}</h2>`,`>${v} <span style="font-size:11px;color:#666">(${fmt(part)}%)</span></h2>`);
+  });
+  html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PORTEFEUILLE PRU</div><div class="montant">${fmt(totalGlobal)} MAD</div>
+  <div style="font-size:12px;opacity:.7;margin-top:8px">VALEUR ACTUELLE</div><div class="montant">${fmt(totalLatent)} MAD</div></div>`;
   document.getElementById('listePortefeuille').innerHTML = html || '<div class="card">Portefeuille vide</div>';
+}
+
+function renderMaj() {
+  let html = '';
+  Object.keys(DB.portefeuille).forEach(v=>{
+    let cours = DB.cours[v] || '';
+    html += `<label>${v}</label><input type="number" step="0.01" id="cours_${v}" value="${cours}" placeholder="Cours actuel">`;
+  });
+  document.getElementById('listeMaj').innerHTML = html || 'Aucune valeur en portefeuille';
+}
+
+function saveMaj() {
+  Object.keys(DB.portefeuille).forEach(v=>{
+    let val = document.getElementById('cours_'+v).value;
+    if(val) DB.cours[v] = parseFloat(val);
+  });
+  save();
+  alert('Cours mis à jour');
+  showEcran('boussole');
 }
 
 function initSelects() {
@@ -470,7 +526,6 @@ function getExportData() {
   return data;
 }
 
-// CORRECTIF POCO X3 MIUI : Blob au lieu de base64
 function exportExcel() {
   let data = getExportData();
   let ws = XLSX.utils.aoa_to_sheet(data);
@@ -499,7 +554,6 @@ function exportCSV() {
   link.click();
 }
 
-// CORRECTIF IMPORT : Tri par date + recalcul stock temps réel + fix dates Excel
 function importExcel() {
   let file = document.getElementById('fileInput').files[0];
   if(!file) return alert('Choisir fichier');
@@ -582,16 +636,7 @@ function triHistorique() {
   let data = DB.transactions.filter(t=>{
     if(fType && t.type!=fType) return false;
     if(fVal && t.valeur!=fVal) return false;
-    if(fDate) {
-      let d = new Date(t.date);
-      let now = new Date();
-      if(fDate=='semaine') {
-        let deb = new Date(now.setDate(now.getDate()-now.getDay()));
-        if(d<deb) return false;
-      }
-      if(fDate=='mois' && (d.getMonth()!=new Date().getMonth() || d.getFullYear()!=new Date().getFullYear())) return false;
-      if(fDate=='annee' && d.getFullYear()!=new Date().getFullYear()) return false;
-    }
+    if(fDate && t.date!=fDate) return false;
     return true;
   });
   return data.sort((a,b)=>b.date.localeCompare(a.date) || b.id-a.id);
