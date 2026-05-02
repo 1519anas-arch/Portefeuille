@@ -9,37 +9,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <style>
-:root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--accent:#007aff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.1)}
+:root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--accent:#007aff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.08)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-body{background:var(--bg);color:#333;padding:8px;min-height:100vh}
+body{background:var(--bg);color:#333;padding:12px;min-height:100vh}
 .hide{display:none!important}
-.btn{background:var(--accent);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:600;font-size:15px}
-.btn:active{opacity:.7}
+.btn{background:var(--accent);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:600;font-size:15px;width:100%}
+.btn:active{transform:scale(.97)}
 .btn-grey{background:#e5e5ea;color:#000}
 .btn-red{background:var(--red)}
 .btn-green{background:var(--green)}
-.btn-small{padding:6px 10px;font-size:12px;border-radius:8px;margin:0 2px}
 input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px;margin:6px 0}
 label{font-size:13px;color:#666;margin-top:8px;display:block}
 .card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
 .card-dark{background:var(--dark);color:#fff;text-align:center}
 h1{font-size:20px;margin-bottom:4px}
 h2{font-size:18px;margin-bottom:12px}
-h3{font-size:14px;color:#666;margin:16px 0 8px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.badge{font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea;display:inline-block}
 .green{color:var(--green)}.red{color:var(--red)}
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
 th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
 th{font-size:11px;color:#666;font-weight:600}
-.boussole{display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto 1fr;gap:8px;max-width:100%;margin:8px auto}
-.haut{grid-column:1/4;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.gauche{background:var(--card);border-radius:16px;padding:12px}
-.centre{background:var(--dark);color:#fff;border-radius:16px;padding:12px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;text-orientation:upright}
-.droite{background:var(--card);border-radius:16px;padding:12px}
-.basmala{font-family:'Amiri Quran',serif;font-size:18px;line-height:2}
+.boussole{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto auto;gap:10px;max-width:500px;margin:20px auto}
+.zone{background:var(--card);border-radius:20px;padding:20px;text-align:center;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;min-height:90px}
+.zone:active{transform:scale(.97)}
+.zone-portefeuille{grid-column:1/4}
+.zone-vente{grid-column:1;grid-row:2}
+.zone-centre{grid-column:2;grid-row:2;background:var(--dark);color:#fff}
+.zone-achat{grid-column:3;grid-row:2}
+.zone-excel{grid-column:1;grid-row:3}
+.zone-historique{grid-column:2;grid-row:3}
+.zone-maj{grid-column:3;grid-row:3}
+.zone-bas{grid-column:1/4;background:var(--card)}
+.basmala{font-family:'Amiri Quran',serif;font-size:16px;line-height:1.9}
+.profit-line{font-size:16px;font-weight:600}
 .nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
 .modal-content{background:var(--card);padding:20px;border-radius:16px;width:90%;max-width:400px}
@@ -49,25 +52,17 @@ th{font-size:11px;color:#666;font-weight:600}
 
 <div id="ecranBoussole">
   <div class="boussole">
-    <div class="haut">
-      <button class="btn" onclick="showEcran('achat')">Achat</button>
-      <button class="btn btn-red" onclick="showEcran('vente')">Vente</button>
+    <div class="zone zone-portefeuille" onclick="showEcran('portefeuille')">Portefeuille</div>
+    <div class="zone zone-vente" onclick="showEcran('vente')">Vente</div>
+    <div class="zone zone-centre" onclick="showEcran('invest')">
+      <div class="basmala">باسم الله الرحمن الرحيم<br>الرحيم والصلاة<br>والسلام على أشرف<br>المرسلين</div>
     </div>
-    <div class="gauche">
-      <button class="btn btn-grey" style="width:100%;margin-bottom:8px" onclick="showEcran('excel')">Excel</button>
-      <button class="btn btn-grey" style="width:100%" onclick="showEcran('historique')">Historique</button>
-    </div>
-    <div class="centre" onclick="showEcran('invest')">
-      <div class="basmala">باسم الله الرحمن الرحيم والصلاة والسلام على أشرف المرسلين</div>
-    </div>
-    <div class="droite">
-      <button class="btn" style="width:100%;margin-bottom:8px" onclick="showEcran('portefeuille')">Portefeuille</button>
-      <div class="card-dark" style="padding:8px;border-radius:12px">
-        <div style="font-size:10px;opacity:.7">PROFIT</div>
-        <div id="profitGlobal" class="green" style="font-size:18px;font-weight:700">0.00</div>
-        <div style="font-size:10px;opacity:.7;margin-top:4px">SOLDE: <span id="soldeGlobal">0.00</span></div>
-      </div>
-      <button class="btn btn-grey" style="width:100%;margin-top:8px" onclick="showEcran('maj')">MÀJ</button>
+    <div class="zone zone-achat" onclick="showEcran('achat')">Achat</div>
+    <div class="zone zone-excel" onclick="showEcran('excel')">Excel</div>
+    <div class="zone zone-historique" onclick="showEcran('historique')">Historique</div>
+    <div class="zone zone-maj" onclick="showEcran('maj')">MÀJ</div>
+    <div class="zone zone-bas">
+      <div class="profit-line"><span class="green" id="profitGlobal">PROFIT NET GLOBAL: 0.00 MAD</span> | <span id="soldeGlobal">Solde: 0.00 MAD</span></div>
     </div>
   </div>
 </div>
@@ -77,7 +72,7 @@ th{font-size:11px;color:#666;font-weight:600}
   <div class="card">
     <div class="card-dark" style="margin-bottom:12px">
       <div style="font-size:12px;opacity:.7">SOLDE DISPONIBLE</div>
-      <div class="montant" id="soldeInvest">0.00 MAD</div>
+      <div style="font-size:28px;font-weight:700;margin:8px 0" id="soldeInvest">0.00 MAD</div>
     </div>
     <label>Montant MAD</label>
     <input type="number" id="montantInvest" step="0.01" placeholder="Tape un montant positif">
@@ -96,11 +91,33 @@ th{font-size:11px;color:#666;font-weight:600}
 </div>
 
 <div id="ecranMaj" class="hide">
-  <div class="nav-top"><h1>MÀJ Cours Manuel</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+  <div class="nav-top"><h1>Cours Veille</h1><button class="btn" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
-    <p style="font-size:12px;color:#666;margin-bottom:12px">Saisis le cours actuel pour chaque valeur</p>
-    <div id="listeMaj"></div>
-    <button class="btn" style="width:100%;margin-top:12px" onclick="saveMaj()">Enregistrer</button>
+    <div id="wrapTableMaj">
+      <div class="table-wrap">
+        <table>
+          <tr><th>Valeur</th><th>Qté</th><th>PRU</th><th>Cours Veille</th><th>+/-</th><th>Latente</th></tr>
+          <tbody id="tableMaj"></tbody>
+        </table>
+      </div>
+      <button class="btn" style="width:100%;margin-top:12px;background:#007aff;color:#fff" onclick="saveMaj()">Enregistrer</button>
+    </div>
+
+    <div id="resumeMaj" class="hide">
+      <div class="table-wrap" style="margin-bottom:16px">
+        <table>
+          <tr><th>Valeur</th><th>Qté</th><th>PRU</th><th>Cours</th><th>+/-</th><th>Latente</th></tr>
+          <tbody id="tableResumeMaj"></tbody>
+        </table>
+      </div>
+      <div class="card-dark" style="padding:20px;border-radius:12px;text-align:center">
+        <div style="font-size:12px;opacity:.7">TOTAL +/- LATENTE</div>
+        <div style="font-size:32px;font-weight:700;margin:8px 0" id="totalLatente">0.00 MAD</div>
+        <div style="font-size:12px;opacity:.7">VALEUR TOTALE</div>
+        <div style="font-size:24px;font-weight:700" id="valeurTotale">0.00 MAD</div>
+      </div>
+      <button class="btn" style="width:100%;margin-top:12px" onclick="renderMaj()">Modifier</button>
+    </div>
   </div>
 </div>
 
@@ -118,10 +135,10 @@ th{font-size:11px;color:#666;font-weight:600}
     <input type="number" id="pruAchatManuel" step="0.01" class="hide">
     <div class="card-dark" style="margin-top:12px">
       <div style="font-size:12px;opacity:.7">PRU calculé</div>
-      <div class="montant" id="pruCalcule">0.00 MAD</div>
+      <div style="font-size:28px;font-weight:700;margin:8px 0" id="pruCalcule">0.00 MAD</div>
       <div style="font-size:12px;opacity:.7">Total: <span id="totalAchat">0.00</span> MAD</div>
     </div>
-    <button class="btn" style="width:100%;margin-top:12px" onclick="validerAchat()">Valider Achat</button>
+    <button class="btn" style="margin-top:12px" onclick="validerAchat()">Valider Achat</button>
   </div>
 </div>
 
@@ -129,17 +146,17 @@ th{font-size:11px;color:#666;font-weight:600}
   <div class="nav-top"><h1>Vente</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
   <div class="card">
     <label>Valeur en stock</label><select id="valeurVente" onchange="updateStock()"></select>
-    <div class="badge">Stock: <span id="stockDispo">0</span> | PRU: <span id="pruVente">0.00</span></div>
+    <div style="font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea;display:inline-block">Stock: <span id="stockDispo">0</span> | PRU: <span id="pruVente">0.00</span></div>
     <label>Date</label><input type="date" id="dateVente">
     <label>Quantité</label><input type="number" id="qteVente" step="1" oninput="simuVente()">
     <label>Prix vente MAD</label><input type="number" id="prixVente" step="0.01" oninput="simuVente()">
     <label>Coût %</label><input type="number" id="coutVente" step="0.01" value="0.11" oninput="simuVente()">
     <div class="card-dark" style="margin-top:12px">
       <div style="font-size:12px;opacity:.7">NET ENCAISSÉ</div>
-      <div class="montant" id="gainNetSimu">0.00 MAD</div>
+      <div style="font-size:28px;font-weight:700;margin:8px 0" id="gainNetSimu">0.00 MAD</div>
       <div style="font-size:11px;opacity:.7;text-align:left;margin-top:8px" id="detailSimu"></div>
     </div>
-    <button class="btn" style="width:100%;margin-top:12px" onclick="validerVente()">Valider Vente</button>
+    <button class="btn" style="margin-top:12px" onclick="validerVente()">Valider Vente</button>
   </div>
 </div>
 
@@ -174,25 +191,8 @@ th{font-size:11px;color:#666;font-weight:600}
   </div>
 </div>
 
-<div id="modalEdit" class="modal hide">
-  <div class="modal-content">
-    <h2>Modifier transaction</h2>
-    <input type="hidden" id="editId">
-    <label>Date</label><input type="date" id="editDate">
-    <label>Type</label><select id="editType"><option>ACHAT</option><option>VENTE</option></select>
-    <label>Valeur</label><input type="text" id="editValeur">
-    <label>Quantité</label><input type="number" id="editQte" step="1">
-    <label>Prix</label><input type="number" id="editPrix" step="0.01">
-    <label>Coût %</label><input type="number" id="editCout" step="0.01">
-    <div class="grid2" style="margin-top:12px">
-      <button class="btn btn-grey" onclick="closeModal()">Annuler</button>
-      <button class="btn" onclick="saveEdit()">Enregistrer</button>
-    </div>
-  </div>
-</div>
-
 <script>
-let DB = {invest:0, mouvements:[], transactions:[], background:'', cours:{}};
+let DB = {invest:0, mouvements:[], transactions:[], cours:{}};
 const R2 = x => Math.round(x*100)/100;
 const R2inf = x => Math.floor(x*100)/100;
 const fmt = x => R2(x).toFixed(2);
@@ -243,11 +243,7 @@ function calcPortefeuille() {
     } else {
       p.qte -= t.qte;
       p.total = p.qte * p.pru;
-      if(p.qte<=0) {
-        p.qte = 0;
-        p.total = 0;
-        p.pru = 0;
-      }
+      if(p.qte<=0) {p.qte = 0;p.total = 0;p.pru = 0;}
     }
   });
   Object.keys(DB.portefeuille).forEach(v=>{
@@ -264,9 +260,9 @@ function getSolde() {
 function updateBoussole() {
   let pvNette = DB.transactions.filter(t=>t.type=='VENTE').reduce((s,t)=>s+t.pvNette,0);
   let solde = getSolde();
-  document.getElementById('profitGlobal').textContent = fmt(pvNette);
-  document.getElementById('soldeGlobal').textContent = fmt(solde);
+  document.getElementById('profitGlobal').textContent = `PROFIT NET GLOBAL: ${fmt(pvNette)} MAD`;
   document.getElementById('profitGlobal').className = pvNette>=0?'green':'red';
+  document.getElementById('soldeGlobal').textContent = `Solde: ${fmt(solde)} MAD`;
 }
 
 function mouvementInvest(signe) {
@@ -299,7 +295,7 @@ function renderPortefeuille() {
     totalGlobal += valPRU;
     totalLatent += valGlobal;
     html += `<div class="card">
-      <div style="display:flex;justify-content:space-between"><h2>${v}</h2><div class="badge">${p.qte} titres</div></div>
+      <div style="display:flex;justify-content:space-between"><h2>${v}</h2><div style="font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea">${p.qte} titres</div></div>
       <div class="grid3">
         <div><div style="font-size:12px;color:#666">PRU</div><div style="font-size:16px;font-weight:600">${fmt(p.pru)}</div></div>
         <div><div style="font-size:12px;color:#666">Cours</div><div style="font-size:16px;font-weight:600">${fmt(cours)}</div></div>
@@ -314,29 +310,86 @@ function renderPortefeuille() {
     let part = totalLatent>0? R2((cours * p.qte / totalLatent) * 100) : 0;
     html = html.replace(`>${v}</h2>`,`>${v} <span style="font-size:11px;color:#666">(${fmt(part)}%)</span></h2>`);
   });
-  html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PRU</div><div class="montant">${fmt(totalGlobal)} MAD</div>
-  <div style="font-size:12px;opacity:.7;margin-top:8px">VALEUR ACTUELLE</div><div class="montant">${fmt(totalLatent)} MAD</div></div>`;
+  html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PRU</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalGlobal)} MAD</div>
+  <div style="font-size:12px;opacity:.7;margin-top:8px">VALEUR ACTUELLE</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalLatent)} MAD</div></div>`;
   document.getElementById('listePortefeuille').innerHTML = html || '<div class="card">Portefeuille vide</div>';
 }
 
 function renderMaj() {
   let html = '';
+  document.getElementById('wrapTableMaj').classList.remove('hide');
+  document.getElementById('resumeMaj').classList.add('hide');
+
   Object.keys(DB.portefeuille).forEach(v=>{
+    let p = DB.portefeuille[v];
     let cours = DB.cours[v] || '';
-    html += `<label>${v}</label><input type="number" step="0.01" id="cours_${v}" value="${cours}" placeholder="Cours actuel">`;
+    let diff = cours? R2(cours - p.pru) : 0;
+    let latente = cours? R2(diff * p.qte) : 0;
+    html += `<tr>
+      <td>${v}</td>
+      <td>${p.qte}</td>
+      <td>${fmt(p.pru)}</td>
+      <td><input type="number" step="0.01" id="cours_${v}" value="${cours}" style="width:80px;padding:4px" oninput="calcLigneMaj('${v}')"></td>
+      <td class="${diff>=0?'green':'red'}" id="diff_${v}">${cours?fmt(diff):'-'}</td>
+      <td class="${latente>=0?'green':'red'}" id="lat_${v}">${cours?fmt(latente):'-'}</td>
+    </tr>`;
   });
-  document.getElementById('listeMaj').innerHTML = html || 'Aucune valeur en portefeuille';
+  document.getElementById('tableMaj').innerHTML = html || '<tr><td colspan=6>Aucune valeur</td></tr>';
+}
+
+function calcLigneMaj(v) {
+  let cours = parseFloat(document.getElementById('cours_'+v).value) || 0;
+  let p = DB.portefeuille[v];
+  if(cours && p) {
+    let diff = R2(cours - p.pru);
+    let latente = R2(diff * p.qte);
+    document.getElementById('diff_'+v).textContent = fmt(diff);
+    document.getElementById('diff_'+v).className = diff>=0?'green':'red';
+    document.getElementById('lat_'+v).textContent = fmt(latente);
+    document.getElementById('lat_'+v).className = latente>=0?'green':'red';
+  } else {
+    document.getElementById('diff_'+v).textContent = '-';
+    document.getElementById('lat_'+v).textContent = '-';
+  }
 }
 
 function saveMaj() {
+  let totalLatente = 0;
+  let valeurTotale = 0;
+  let htmlResume = '';
+
   Object.keys(DB.portefeuille).forEach(v=>{
     let val = document.getElementById('cours_'+v).value;
-    if(val) DB.cours[v] = parseFloat(val);
+    if(val) {
+      let cours = parseFloat(val);
+      DB.cours[v] = cours;
+      let p = DB.portefeuille[v];
+      let diff = R2(cours - p.pru);
+      let latente = R2(diff * p.qte);
+      totalLatente += latente;
+      valeurTotale += R2(cours * p.qte);
+      htmlResume += `<tr>
+        <td>${v}</td>
+        <td>${p.qte}</td>
+        <td>${fmt(p.pru)}</td>
+        <td>${fmt(cours)}</td>
+        <td class="${diff>=0?'green':'red'}">${fmt(diff)}</td>
+        <td class="${latente>=0?'green':'red'}">${fmt(latente)}</td>
+      </tr>`;
+    }
   });
+
+  DB.dateMajCours = new Date().toLocaleString('fr-FR');
   save();
-  alert('Cours mis à jour');
-  showEcran('boussole');
+
+  document.getElementById('wrapTableMaj').classList.add('hide');
+  document.getElementById('resumeMaj').classList.remove('hide');
+  document.getElementById('tableResumeMaj').innerHTML = htmlResume;
+  document.getElementById('totalLatente').textContent = fmt(totalLatente)+' MAD';
+  document.getElementById('totalLatente').className = totalLatente>=0?'green':'red';
+  document.getElementById('valeurTotale').textContent = fmt(valeurTotale)+' MAD';
 }
+
 
 function initSelects() {
   let valeurs = [...new Set(DB.transactions.map(t=>t.valeur))];
@@ -371,19 +424,6 @@ function calcAchat() {
   document.getElementById('totalAchat').textContent = fmt(pru * q);
 }
 
-function clearAchat() {
-  document.getElementById('valeurAchat').value = '';
-  document.getElementById('valeurAchatAutre').value = '';
-  document.getElementById('valeurAchatAutre').classList.add('hide');
-  document.getElementById('qteAchat').value = '';
-  document.getElementById('prixAchat').value = '';
-  document.getElementById('coutAchat').value = '0.11';
-  document.getElementById('pruManuel').checked = false;
-  document.getElementById('pruAchatManuel').value = '';
-  document.getElementById('pruAchatManuel').classList.add('hide');
-  calcAchat();
-}
-
 function validerAchat() {
   let v = document.getElementById('valeurAchat').value=='AUTRE'? document.getElementById('valeurAchatAutre').value.trim() : document.getElementById('valeurAchat').value;
   let d = document.getElementById('dateAchat').value;
@@ -396,8 +436,6 @@ function validerAchat() {
   if(pru*q > getSolde()) return alert('Dépasse le solde: '+fmt(getSolde())+' MAD');
   DB.transactions.push({id:Date.now(), type:'ACHAT', date:d, valeur:v, qte:q, prix:p, cout:c, frais:frais, pru:pru});
   save();
-  clearAchat();
-  alert('Achat validé');
   showEcran('boussole');
 }
 
@@ -427,23 +465,7 @@ function simuVente() {
   let pvNette = R2(pvBrute - taxe);
   let netEncaisse = R2(prixNet * q - taxe);
   document.getElementById('gainNetSimu').textContent = fmt(netEncaisse)+' MAD';
-  document.getElementById('gainNetSimu').className = 'montant '+(pvNette>=0?'green':'red');
-  document.getElementById('detailSimu').innerHTML = `
-    Prix vente net: ${fmt(prixNet)}<br>
-    PRU stock: ${fmt(port.pru)}<br>
-    PV Brute: ${fmt(pvBrute)} MAD<br>
-    Taxe 15%: ${fmt(taxe)} MAD<br>
-    PV Nette: ${fmt(pvNette)} MAD<br>
-    Net encaissé: ${fmt(netEncaisse)} MAD
-  `;
-}
-
-function clearVente() {
-  document.getElementById('valeurVente').value = '';
-  document.getElementById('qteVente').value = '';
-  document.getElementById('prixVente').value = '';
-  document.getElementById('coutVente').value = '0.11';
-  updateStock();
+  document.getElementById('detailSimu').innerHTML = `PRU: ${fmt(port.pru)} | PV: ${fmt(pvNette)} | Taxe: ${fmt(taxe)}`;
 }
 
 function validerVente() {
@@ -463,8 +485,6 @@ function validerVente() {
   let netEncaisse = R2(prixNet * q - taxe);
   DB.transactions.push({id:Date.now(), type:'VENTE', date:d, valeur:v, qte:q, prix:p, cout:c, frais:fraisV, pru:port.pru, pvBrute:pvBrute, taxe:taxe, pvNette:pvNette, netEncaisse:netEncaisse});
   save();
-  clearVente();
-  alert(`Vente OK\nPV Brute: ${fmt(pvBrute)}\nTaxe: ${fmt(taxe)}\nPV Nette: ${fmt(pvNette)}\nNet encaissé: ${fmt(netEncaisse)}`);
   showEcran('boussole');
 }
 
@@ -485,17 +505,13 @@ function exportExcel() {
   let ws = XLSX.utils.aoa_to_sheet(data);
   let wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Historique");
-  let wbout = XLSX.write(wb, {bookType:'xlsx', type:'array', cellStyles:true});
+  let wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
   let blob = new Blob([wbout], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
   let url = URL.createObjectURL(blob);
   let link = document.createElement('a');
   link.href = url;
   link.download = 'portefeuille_mad.xlsx';
-  link.style.display = 'none';
-  document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
-  setTimeout(()=>URL.revokeObjectURL(url), 100);
 }
 
 function exportCSV() {
@@ -517,23 +533,18 @@ function importExcel() {
     let data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header:1, defval:''});
     let count = 0;
     let erreurs = [];
-
     const cleanNumber = (val) => {
       if(typeof val === 'number') return val;
       return parseFloat(String(val).replace(/\s/g,'').replace(',','.')) || 0;
     };
-
     const excelDateToStr = (val) => {
-      if(val instanceof Date) {
-        return val.toISOString().split('T')[0];
-      }
+      if(val instanceof Date) return val.toISOString().split('T')[0];
       if(typeof val === 'number') {
         let d = XLSX.SSF.parse_date_code(val);
         return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
       }
       return String(val).trim().split(' ')[0];
     };
-
     let tempTrans = [];
     data.slice(1).forEach((r,i)=>{
       let date = excelDateToStr(r[0]);
@@ -545,14 +556,11 @@ function importExcel() {
       if(!date||!type||!val||!qte||!prix) return;
       tempTrans.push({id:Date.now()+Math.random()+i, type, date, valeur:val, qte, prix, cout});
     });
-
     tempTrans.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id);
-
-     let portTemp = {};
+    let portTemp = {};
     tempTrans.forEach(t=>{
       if(!portTemp[t.valeur]) portTemp[t.valeur] = {qte:0, pru:0, total:0};
       let p = portTemp[t.valeur];
-
       if(t.type=='ACHAT') {
         let frais=R2(t.prix*t.cout/100), pru=R2(t.prix+frais);
         DB.transactions.push({...t, frais, pru});
@@ -570,14 +578,13 @@ function importExcel() {
           p.total = p.qte * p.pru;
           count++;
         } else {
-          erreurs.push(`${t.date} ${t.valeur}: stock insuffisant ${p.qte}<${t.qte}`);
+          erreurs.push(`${t.date} ${t.valeur}: stock insuffisant`);
         }
       }
     });
-
     save();
-    let msg = `Import terminé: ${count} transactions ajoutées`;
-    if(erreurs.length) msg += '\n\nErreurs:\n' + erreurs.join('\n');
+    let msg = `Import: ${count} transactions`;
+    if(erreurs.length) msg += '\nErreurs: ' + erreurs.join(', ');
     alert(msg);
   };
   reader.readAsArrayBuffer(file);
@@ -598,83 +605,20 @@ function triHistorique() {
 
 function renderHistorique() {
   let data = triHistorique();
-  let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th><th>Actions</th></tr>';
+  let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th></tr>';
   data.forEach(t=>{
     html += `<tr>
       <td>${t.date}</td>
-      <td><span class="badge ${t.type=='ACHAT'?'green':'red'}">${t.type}</span></td>
+      <td>${t.type}</td>
       <td>${t.valeur}</td>
       <td>${t.qte}</td>
       <td>${fmt(t.prix)}</td>
       <td>${t.cout}</td>
       <td>${fmt(t.pru)}</td>
       <td class="${t.type=='VENTE'?(t.pvNette>=0?'green':'red'):''}">${t.type=='VENTE'?fmt(t.pvNette):'-'}</td>
-      <td>
-        <button class="btn btn-small btn-grey" onclick="editTrans(${t.id})">Edit</button>
-        <button class="btn btn-small btn-red" onclick="supprTrans(${t.id})">X</button>
-      </td>
     </tr>`;
   });
   document.getElementById('tableHistorique').innerHTML = html + '</table>';
-}
-
-function supprTrans(id) {
-  if(confirm('Supprimer cette transaction? Cette action est définitive.')) {
-    DB.transactions = DB.transactions.filter(t=>t.id!=id);
-    save();
-    renderHistorique();
-  }
-}
-
-function editTrans(id) {
-  let t = DB.transactions.find(x=>x.id==id);
-  if(!t) return;
-  document.getElementById('editId').value = id;
-  document.getElementById('editDate').value = t.date;
-  document.getElementById('editType').value = t.type;
-  document.getElementById('editValeur').value = t.valeur;
-  document.getElementById('editQte').value = t.qte;
-  document.getElementById('editPrix').value = t.prix;
-  document.getElementById('editCout').value = t.cout;
-  document.getElementById('modalEdit').classList.remove('hide');
-}
-
-function closeModal() {
-  document.getElementById('modalEdit').classList.add('hide');
-}
-
-function saveEdit() {
-  let id = parseFloat(document.getElementById('editId').value);
-  let t = DB.transactions.find(x=>x.id==id);
-  if(!t) return;
-  if(!confirm('Valider les modifications?')) return;
-
-  t.date = document.getElementById('editDate').value;
-  t.type = document.getElementById('editType').value;
-  t.valeur = document.getElementById('editValeur').value;
-  t.qte = parseFloat(document.getElementById('editQte').value);
-  t.prix = parseFloat(document.getElementById('editPrix').value);
-  t.cout = parseFloat(document.getElementById('editCout').value);
-  t.frais = R2(t.prix * t.cout / 100);
-
-  if(t.type=='ACHAT') {
-    t.pru = R2(t.prix + t.frais);
-    delete t.pvBrute; delete t.taxe; delete t.pvNette; delete t.netEncaisse;
-  } else {
-    calcPortefeuille();
-    let port = DB.portefeuille[t.valeur];
-    if(!port) { alert('Stock insuffisant pour recalculer'); return; }
-    let prixNet = R2(t.prix - t.frais);
-    t.pru = port.pru;
-    t.pvBrute = R2((prixNet - t.pru) * t.qte);
-    t.taxe = t.pvBrute>0? R2inf(t.pvBrute * 0.15) : 0;
-    t.pvNette = R2(t.pvBrute - t.taxe);
-    t.netEncaisse = R2(prixNet * t.qte - t.taxe);
-  }
-
-  save();
-  closeModal();
-  renderHistorique();
 }
 
 load();
