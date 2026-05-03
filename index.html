@@ -850,7 +850,7 @@ async function chargerCours() {
   if(!el) return;
   el.innerText = 'Chargement...';
   try {
-    const res = await fetch('https://api.allorigins.win/raw?url=https://www.casablanca-bourse.com/bourseweb/en/cours.jsp');
+    const res = await fetch('https://jsonplaceholder.typicode.com/todos/1');const data = await res.json();el.innerHTML = 'Test OK: ' + data.title;;
     const html = await res.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
