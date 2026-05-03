@@ -845,25 +845,28 @@ function calcSim() {
 
   document.getElementById('resultatSim').innerHTML = html;
 }
-function chargerCours() {
-  fetch('cours.json?t='+Date.now())
-  .then(r => r.json())
-  .then(data => {
-      let html = data.cours.map(c => {
-        let v = parseFloat(String(c.var).replace('%','').replace(',','.'));
-        let cls = v >= 0 ? 'green' : 'red';
-        return `<div class="live-row" style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee">
-          <span>${c.valeur}</span>
-          <span class="${cls}">${c.cours} <small>${c.var}</small></span>
-        </div>`;
-      }).join('');
-      document.getElementById('listeCours').innerHTML = html || 'Aucun cours';
-      document.getElementById('dateMajCours').textContent = data.date;
-    })
-  .catch(e => {
-      document.getElementById('listeCours').innerHTML = 'Cours indisponibles';
-    });
+async function chargerCours() {
+  const el = document.getElementById('listeCours');
+  if(!el) return;
+  el.innerText = 'Chargement...';
+  try {
+    const res = await fetch('https://api.allorigins.win/raw?url=https://www.casablanca-bourse.com/bourseweb/en/cours.jsp');
+    const html = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const rows = doc.querySelectorAll('table tr');
+    let out = '';
+    for(let i=1; i<15 && i<rows.length; i++){
+      const td = rows[i].querySelectorAll('td');
+      if(td.length>3) out += td[0].innerText+' '+td[1].innerText+' '+td[3].innerText+'<br>';
+    }
+    el.innerHTML = out || 'Vide';
+    document.getElementById('dateMajCours').innerText = new Date().toLocaleTimeString();
+  } catch(e) {
+    el.innerText = 'Erreur';
+  }
 }
+
 
 let oldShow = showEcran;
 showEcran = function(nom) {
