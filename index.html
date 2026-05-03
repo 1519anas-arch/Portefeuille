@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portefeuille Bourse MAD</title>
+<title>S. CAPITAL BOURSE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <style>
-:root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--accent:#007aff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.08)}
+.ecran { display: none; }
+.ecran.active { display: block; }
+:root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--primary:#003366;--accent:#00aaff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.08)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
 body{background:var(--bg);color:#333;padding:12px;min-height:100vh}
 .hide{display:none!important}
-.btn{background:var(--accent);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:600;font-size:15px;width:100%}
+.btn{background:#007aff;color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:600;font-size:15px;width:100%}
 .btn:active{transform:scale(.97)}
 .btn-grey{background:#e5e5ea;color:#000}
 .btn-red{background:var(--red)}
@@ -21,8 +23,8 @@ body{background:var(--bg);color:#333;padding:12px;min-height:100vh}
 input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px;margin:6px 0}
 label{font-size:13px;color:#666;margin-top:8px;display:block}
 .ligne-valeur{display:flex;justify-content:space-between;align-items:center;margin:2px 0;}
-.ligne-valeur .label{font-size:12px;color:#666;}
-.ligne-valeur .montant{font-size:14px;font-weight:600;}
+.ligne-valeur.label{font-size:12px;color:#666;}
+.ligne-valeur.montant{font-size:14px;font-weight:600;}
 .card{background:var(--card);border-radius:16px;padding:12px;margin:8px 0;box-shadow:var(--shadow)}
 .card-dark{background:var(--dark);color:#fff;text-align:center}
 h1{font-size:20px;margin-bottom:4px}
@@ -33,45 +35,65 @@ h2{font-size:18px;margin-bottom:12px}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
 th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
 th{font-size:11px;color:#666;font-weight:600}
-.boussole{display:grid;grid-template-columns:1fr 1fr 1fr;grid-auto-rows:1fr;gap:12px}
-.zone{background:var(--card);border-radius:20px;padding:20px;text-align:center;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;min-height:90px}
-.zone:active{transform:scale(.97)}
-.zone-portefeuille{grid-column:1/4}
-.zone-vente{grid-column:1;grid-row:2}
-.zone-centre{grid-column:2;grid-row:2;background:var(--dark);color:#fff}
-.zone-achat{grid-column:3;grid-row:2}
-.zone-excel{grid-column:1;grid-row:3;min-height:60px}
-.zone-historique{grid-column:2;grid-row:3;min-height:60px}
-.zone-maj{grid-column:3;grid-row:3;min-height:60px}
-.zone-bas{grid-column:1/4;background:var(--card)}
 .basmala{font-family:'Amiri Quran',serif;font-size:13px;line-height:1.2;text-align:center;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;padding:4px;}
 .profit-line{font-size:16px;font-weight:600}
 .nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
-.modal-content{background:var(--card);padding:20px;border-radius:16px;width:90%;max-width:400px}
+header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-weight:bold;font-size:1.2rem;box-shadow:0 2px 5px rgba(0,0,0,0.1);margin:-12px -12px 20px -12px}
+.home-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;padding:0;max-width:500px;margin:30px auto}
+.menu-btn{background:#fff;border:1px solid #ddd;padding:25px 10px;border-radius:12px;color:var(--primary);font-weight:bold;font-size:0.9rem;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.05);transition:transform 0.2s}
+.menu-btn:active{transform:scale(0.95);background:var(--accent);color:#fff}
+.page{display:none;animation:slideIn 0.3s ease-out}
+.page.active{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.back-btn{display:inline-block;margin-bottom:20px;padding:10px 20px;background:var(--primary);color:#fff;border:none;border-radius:5px;cursor:pointer}
+.basmala-zone{text-align:center;margin-top:40px}
+.live-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee}
+.price{font-weight:bold;font-family:monospace;transition:all 0.3s}
+.up{color:#27ae60}.down{color:#e74c3c}
 </style>
 </head>
 <body>
 
-<div id="ecranBoussole">
-  <div class="boussole">
-    <div class="zone zone-portefeuille" onclick="showEcran('portefeuille')">Portefeuille</div>
-    <div class="zone zone-vente" onclick="showEcran('vente')">Vente</div>
-    <div class="zone zone-centre" onclick="showEcran('invest')">
-      <div class="basmala">باسم الله الرحمن الرحيم<br> و الصلاة والسلام <br> على أشرف المرسلين</div>
+<header id="main-header">S. CAPITAL BOURSE</header>
+
+<!-- PAGE D'ACCUEIL -->
+<div class="ecran page active" id="ecranHome">
+    <div class="home-grid">
+        <button class="menu-btn" onclick="showEcran('marche')">📊 MARCHÉ EN DIRECT</button>
+        <button class="menu-btn" onclick="showEcran('portefeuille')">PORTEFEUILLE</button>
+        <button class="menu-btn" onclick="showEcran('vente')">VENDRE</button>
+        <button class="menu-btn" onclick="showEcran('achat')">ACHAT</button>
+        <button class="menu-btn" onclick="showEcran('maj')">MAJ</button>
+        <button class="menu-btn" onclick="showEcran('excel')">EXCEL</button>
+        <button class="menu-btn" onclick="showEcran('historique')">HISTORIQUE</button>
+        <button class="menu-btn" onclick="showEcran('invest')">INVEST</button>
+    <button class="menu-btn" onclick="showEcran('simulation')" style="grid-column: 1 / -1; justify-self: center; width: 60%;">SIMULATION</button>
+  </div>
     </div>
-    <div class="zone zone-achat" onclick="showEcran('achat')">Achat</div>
-    <div class="zone zone-excel" onclick="showEcran('excel')">Excel</div>
-    <div class="zone zone-historique" onclick="showEcran('historique')">Historique</div>
-    <div class="zone zone-maj" onclick="showEcran('maj')">MÀJ</div>
-    <div class="zone zone-bas">
-      <div class="profit-line"><span class="green" id="profitGlobal">PROFIT NET GLOBAL: 0.00 MAD</span> | <span id="soldeGlobal">Solde: 0.00 MAD</span></div>
+    <div class="basmala-zone">
+        <div class="basmala">باسم الله الرحمن الرحيم<br> و الصلاة والسلام <br> على أشرف المرسلين</div>
+       <div class="profit-line" style="margin-top:12px">
+    <div class="green" id="profitGlobal">PROFIT NET GLOBAL: 0.00 MAD</div>
+    <div id="soldeGlobal">Solde: 0.00 MAD</div>
+</div>
+    </div>
+</div>
+
+<!-- ONGLET 1 : MARCHÉ NOUVEAU -->
+<div class="ecran page" id="ecranMarche">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <h2>Marché en direct</h2>
+  <div class="card">
+    <div id="listeCours">Chargement...</div>
+    <div style="font-size:11px;color:#666;margin-top:8px;text-align:right">
+      MÀJ : <span id="dateMajCours">-</span>
     </div>
   </div>
 </div>
 
-<div id="ecranInvest" class="hide">
-  <div class="nav-top"><h1>Dépôt / Retrait</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+<div class="ecran page" id="ecranInvest">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Dépôt / Retrait</h1></div>
   <div class="card">
     <div class="card-dark" style="margin-bottom:12px">
       <div style="font-size:12px;opacity:.7">SOLDE DISPONIBLE</div>
@@ -90,13 +112,48 @@ th{font-size:11px;color:#666;font-weight:600}
   </div>
 </div>
 
-<div id="ecranPortefeuille" class="hide">
-  <div class="nav-top"><h1>Portefeuille</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+<div class="ecran page" id="ecranPortefeuille">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Portefeuille</h1></div>
   <div id="listePortefeuille"></div>
 </div>
-
-<div id="ecranMaj" class="hide">
-  <div class="nav-top"><h1>Cours Veille</h1><button class="btn" onclick="showEcran('boussole')">Fermer</button></div>
+<div class="ecran" id="ecranSimulation">
+      <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <h2>Simulation Vente Stock</h2>
+  <div class="card">
+    <div class="form-group">
+      <label>Valeur en stock</label>
+      <select id="simValeur" class="form-input" onchange="updateSimValeur()"></select>
+    </div>
+    <div class="form-group">
+      <label>Quantité à vendre</label>
+      <input type="number" id="simQte" class="form-input" oninput="calcSim()">
+    </div>
+    <div class="form-group">
+      <label>Prix de vente</label>
+      <input type="number" id="simPrixV" class="form-input" step="0.01" oninput="calcSim()">
+    </div>
+    <div class="form-group">
+      <label>Coût % vente</label>
+      <input type="number" id="simCoutV" class="form-input" value="0.11" step="0.01" oninput="calcSim()">
+    </div>
+    <div id="simResultat" style="margin-top:15px;padding:10px;background:#f3f4f6;border-radius:8px;font-weight:600;"></div>
+    <hr style="margin:16px 0;border:0;border-top:1px solid #333">
+    <div style="font-size:12px;opacity:.7;margin-bottom:8px">VERSION MANUELLE</div>
+    <div class="form-group">
+      <label>Prix d'achat manuel</label>
+      <input type="number" id="simPrixA" class="form-input" step="0.01" oninput="calcSim()">
+    </div>
+    <div class="form-group">
+      <label>Coût % achat manuel</label>
+      <input type="number" id="simCoutA" class="form-input" value="0.11" step="0.01" oninput="calcSim()">
+    </div>
+  </div>
+  <div id="resultatSim"></div>
+</div>
+<div class="ecran page" id="ecranMaj">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Cours Veille</h1></div>
   <div class="card">
     <div id="wrapTableMaj">
       <div class="table-wrap">
@@ -129,9 +186,9 @@ th{font-size:11px;color:#666;font-weight:600}
     </div>
   </div>
 </div>
-
-<div id="ecranAchat" class="hide">
-  <div class="nav-top"><h1>Achat</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+<div class="ecran page" id="ecranAchat">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Achat</h1></div>
   <div class="card">
     <label>Valeur</label>
     <select id="valeurAchat" onchange="toggleAutreAchat()"></select>
@@ -150,17 +207,17 @@ th{font-size:11px;color:#666;font-weight:600}
     <button class="btn" style="margin-top:12px" onclick="validerAchat()">Valider Achat</button>
   </div>
 </div>
-
-<div id="ecranVente" class="hide">
-  <div class="nav-top"><h1>Vente</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+<div class="ecran page" id="ecranVente">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Vente</h1></div>
   <div class="card">
     <label>Valeur en stock</label><select id="valeurVente" onchange="updateStock()"></select>
     <div style="font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea;display:inline-block">Stock: <span id="stockDispo">0</span> | PRU: <span id="pruVente">0.00</span></div>
     <label>Date</label><input type="date" id="dateVente">
     <label>Quantité</label><input type="number" id="qteVente" step="1" oninput="simuVente()">
+    <label>Coût % vente</label>
+<input type="number" id="coutVente" class="form-input" value="0.11" step="0.01" oninput="simuVente()">
     <label>Prix vente MAD</label><input type="number" id="prixVente" step="0.01" oninput="simuVente()">
-    <label>Coût %</label><input type="number" id="coutVente" step="0.01" value="0.11" oninput="simuVente()">
-    <div class="card-dark" style="margin-top:12px">
       <div style="font-size:12px;opacity:.7">NET ENCAISSÉ</div>
       <div style="font-size:28px;font-weight:700;margin:8px 0" id="gainNetSimu">0.00 MAD</div>
       <div style="font-size:11px;opacity:.7;text-align:left;margin-top:8px" id="detailSimu"></div>
@@ -168,9 +225,9 @@ th{font-size:11px;color:#666;font-weight:600}
     <button class="btn" style="margin-top:12px" onclick="validerVente()">Valider Vente</button>
   </div>
 </div>
-
-<div id="ecranExcel" class="hide">
-  <div class="nav-top"><h1>Excel</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+<div class="ecran page" id="ecranExcel">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Excel</h1></div>
   <div class="card">
     <h2>Importer</h2>
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
@@ -182,9 +239,9 @@ th{font-size:11px;color:#666;font-weight:600}
     </div>
   </div>
 </div>
-
-<div id="ecranHistorique" class="hide">
-  <div class="nav-top"><h1>Historique</h1><button class="btn btn-grey" onclick="showEcran('boussole')">Fermer</button></div>
+<div class="ecran page" id="ecranHistorique">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Historique</h1></div>
   <div class="card">
     <label>Type</label>
     <select id="filtreType" onchange="renderHistorique()">
@@ -213,6 +270,7 @@ function load() {
   updateAll();
   document.getElementById('dateAchat').valueAsDate = new Date();
   document.getElementById('dateVente').valueAsDate = new Date();
+  simulateLiveMarket();
 }
 
 function save() {
@@ -222,22 +280,23 @@ function save() {
 
 function updateAll() {
   calcPortefeuille();
-  updateBoussole();
+  updateHome();
   initSelects();
   initFiltreValeur();
 }
 
 function showEcran(nom) {
-  ['boussole','invest','portefeuille','achat','vente','excel','historique','maj'].forEach(e=>{
-    document.getElementById('ecran'+e.charAt(0).toUpperCase()+e.slice(1)).classList.add('hide');
-  });
-  document.getElementById('ecran'+nom.charAt(0).toUpperCase()+nom.slice(1)).classList.remove('hide');
+  document.querySelectorAll('.ecran').forEach(p => p.classList.remove('active'));
+  document.getElementById('ecran'+nom.charAt(0).toUpperCase()+nom.slice(1)).classList.add('active');
+  window.scrollTo(0,0);
   if(nom=='portefeuille') renderPortefeuille();
   if(nom=='historique') renderHistorique();
   if(nom=='invest') renderInvest();
   if(nom=='vente') updateStock();
   if(nom=='maj') renderMaj();
+  if(nom=='simulation') loadSimData();
 }
+
 
 function calcPortefeuille() {
   DB.portefeuille = {};
@@ -266,7 +325,7 @@ function getSolde() {
   return R2(DB.invest - depenses + encaisse);
 }
 
-function updateBoussole() {
+function updateHome() {
   let pvNette = DB.transactions.filter(t=>t.type=='VENTE').reduce((s,t)=>s+t.pvNette,0);
   let solde = getSolde();
   document.getElementById('profitGlobal').textContent = `PROFIT NET GLOBAL: ${fmt(pvNette)} MAD`;
@@ -297,42 +356,51 @@ function renderPortefeuille() {
   let html = '';
   let totalGlobal = 0;
   let totalLatent = 0;
+
+  // Calcul des totaux d'abord
+  Object.keys(DB.portefeuille).forEach(v=>{
+    let p = DB.portefeuille[v];
+    let cours = DB.cours[v] || p.pru;
+    totalGlobal += p.pru * p.qte;
+    totalLatent += cours * p.qte;
+  });
+
   Object.keys(DB.portefeuille).forEach(v=>{
     let p = DB.portefeuille[v];
     let cours = DB.cours[v] || p.pru;
     let valGlobal = cours * p.qte;
     let valPRU = p.pru * p.qte;
     let latent = R2((cours - p.pru) * p.qte);
-    totalGlobal += valPRU;
-    totalLatent += valGlobal;
-     html += `<div class="card">
+    let poids = totalLatent > 0? R2(valGlobal / totalLatent * 100) : 0;
+
+    html += `<div class="card">
     <div style="display:flex;justify-content:space-between;margin-bottom:8px">
       <div style="font-weight:600;font-size:15px">${v}</div>
       <div style="font-size:14px">${p.qte}</div>
     </div>
-
     <div class="ligne-valeur">
       <span class="label">PRU</span>
       <span class="montant">${R2(p.pru)}</span>
     </div>
-
     <div class="ligne-valeur">
       <span class="label">Cours</span>
-    <span class="montant">${R2(cours)}</span>
+      <span class="montant">${R2(cours)}</span>
     </div>
-  
-  <div class="ligne-valeur">
-    <span class="label">Latent</span>
-    <span class="montant" style="color:${latent>=0?'#10b981':'#ef4444'}">${R2(latent)}</span>
-  </div>
-  
-  <div class="ligne-valeur">
-    <span class="label">Valeur</span>
-    <span class="montant">${R2(valGlobal)}</span>
-  </div>
+    <div class="ligne-valeur">
+      <span class="label">Latent</span>
+      <span class="montant" style="color:${latent>=0?'#10b981':'#ef4444'}">${R2(latent)}</span>
+    </div>
+    <div class="ligne-valeur">
+      <span class="label">Valeur</span>
+      <span class="montant">${R2(valGlobal)}</span>
+    </div>
+    <div class="ligne-valeur">
+      <span class="label">Poids</span>
+      <span class="montant">${poids.toFixed(2)}%</span>
+    </div>
 </div>`;
   });
-  
+
   html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PRU</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalGlobal)} MAD</div>
   <div style="font-size:12px;opacity:.7;margin-top:8px">VALEUR ACTUELLE</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalLatent)} MAD</div></div>`;
   document.getElementById('listePortefeuille').innerHTML = html || '<div class="card">Portefeuille vide</div>';
@@ -342,7 +410,6 @@ function renderMaj() {
   let html = '';
   document.getElementById('wrapTableMaj').classList.remove('hide');
   document.getElementById('resumeMaj').classList.add('hide');
-
   Object.keys(DB.portefeuille).forEach(v=>{
     let p = DB.portefeuille[v];
     let cours = DB.cours[v] || '';
@@ -380,7 +447,6 @@ function saveMaj() {
   let totalLatente = 0;
   let valeurTotale = 0;
   let htmlResume = '';
-
   Object.keys(DB.portefeuille).forEach(v=>{
     let val = document.getElementById('cours_'+v).value;
     if(val) {
@@ -397,14 +463,12 @@ function saveMaj() {
         <td>${fmt(p.pru)}</td>
         <td>${fmt(cours)}</td>
         <td class="${diff>=0?'green':'red'}">${fmt(diff)}</td>
-        <td class="${latente>=0?'green':'red'}">${fmt(latente)}</td>
+  <td class="${latente>=0?'green':'red'}">${fmt(latente)}</td>
       </tr>`;
     }
   });
-
   DB.dateMajCours = new Date().toLocaleString('fr-FR');
   save();
-
   document.getElementById('wrapTableMaj').classList.add('hide');
   document.getElementById('resumeMaj').classList.remove('hide');
   document.getElementById('tableResumeMaj').innerHTML = htmlResume;
@@ -413,7 +477,6 @@ function saveMaj() {
   document.getElementById('valeurTotale').textContent = fmt(valeurTotale)+' MAD';
 }
 
-
 function initSelects() {
   let valeurs = [...new Set(DB.transactions.map(t=>t.valeur))];
   let ha = '<option value="">Choisir...</option>'+valeurs.map(v=>`<option>${v}</option>`).join('')+'<option value="AUTRE">Autre...</option>';
@@ -421,7 +484,6 @@ function initSelects() {
   let hv = '<option value="">Choisir...</option>'+Object.keys(DB.portefeuille).map(v=>`<option>${v}</option>`).join('');
   document.getElementById('valeurVente').innerHTML = hv;
 }
-
 function initFiltreValeur() {
   let valeurs = [...new Set(DB.transactions.map(t=>t.valeur))];
   let fv = '<option value="">Toutes</option>'+valeurs.map(v=>`<option>${v}</option>`).join('');
@@ -459,7 +521,7 @@ function validerAchat() {
   if(pru*q > getSolde()) return alert('Dépasse le solde: '+fmt(getSolde())+' MAD');
   DB.transactions.push({id:Date.now(), type:'ACHAT', date:d, valeur:v, qte:q, prix:p, cout:c, frais:frais, pru:pru});
   save();
-  showEcran('boussole');
+  showEcran('home');
 }
 
 function updateStock() {
@@ -474,7 +536,7 @@ function simuVente() {
   let v = document.getElementById('valeurVente').value;
   let q = parseFloat(document.getElementById('qteVente').value)||0;
   let p = parseFloat(document.getElementById('prixVente').value)||0;
-  let c = parseFloat(document.getElementById('coutVente').value)||0;
+  let c = parseFloat(document.getElementById('coutVente').value.replace(',', '.'))||0;
   let port = DB.portefeuille[v];
   if(!port||!q||!p) {
     document.getElementById('gainNetSimu').textContent = '0.00 MAD';
@@ -501,14 +563,16 @@ function validerVente() {
   if(!v||!d||!q||!p) return alert('Remplis tout');
   if(q > port.qte) return alert('Qté > stock: '+port.qte);
   let fraisV = R2(p * c / 100);
-  let prixNet = R2(p - fraisV);
-  let pvBrute = R2((prixNet - port.pru) * q);
-  let taxe = pvBrute>0? R2inf(pvBrute * 0.15) : 0;
-  let pvNette = R2(pvBrute - taxe);
-  let netEncaisse = R2(prixNet * q - taxe);
+let fraisA = R2(port.pru * c / 100);  // <-- MANQUANT : frais d'achat
+let prixNet = R2(p - fraisV);
+let prixAchatTotal = R2(port.pru + fraisA); // <-- MANQUANT : PRU + frais
+let pvBrute = R2((prixNet - prixAchatTotal) * q); // <-- utilise prixAchatTotal
+let taxe = pvBrute > 0 ? R2inf(pvBrute * 0.15) : 0;
+let pvNette = R2(pvBrute - taxe);
+let netEncaisse = R2((prixNet * q) - taxe); // Net après taxe 15% // <-- le net encaissé c'est juste prixNet * q
   DB.transactions.push({id:Date.now(), type:'VENTE', date:d, valeur:v, qte:q, prix:p, cout:c, frais:fraisV, pru:port.pru, pvBrute:pvBrute, taxe:taxe, pvNette:pvNette, netEncaisse:netEncaisse});
   save();
-  showEcran('boussole');
+  showEcran('home');
 }
 
 function getExportData() {
@@ -625,10 +689,9 @@ function triHistorique() {
   });
   return data.sort((a,b)=>b.date.localeCompare(a.date) || b.id-a.id);
 }
-
 function renderHistorique() {
   let data = triHistorique();
-  let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th></tr>';
+  let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th><th>Action</th></tr>';
   data.forEach(t=>{
     html += `<tr>
       <td>${t.date}</td>
@@ -639,12 +702,181 @@ function renderHistorique() {
       <td>${t.cout}</td>
       <td>${fmt(t.pru)}</td>
       <td class="${t.type=='VENTE'?(t.pvNette>=0?'green':'red'):''}">${t.type=='VENTE'?fmt(t.pvNette):'-'}</td>
+      <td>
+        <button onclick="editHistorique(${t.id})" style="padding:4px 8px;font-size:11px;margin-right:4px">✏️</button>
+        <button onclick="deleteHistorique(${t.id})" style="padding:4px 8px;font-size:11px;background:#ff3b30;color:#fff">🗑️</button>
+      </td>
     </tr>`;
   });
   document.getElementById('tableHistorique').innerHTML = html + '</table>';
 }
 
+function deleteHistorique(id) {
+  if(!confirm('Supprimer cette opération ?')) return;
+  DB.transactions = DB.transactions.filter(t => t.id != id);
+  save();
+  renderHistorique();
+}
+
+function editHistorique(id) {
+  let t = DB.transactions.find(x => x.id == id);
+  if(!t) return;
+  let newQte = parseFloat(prompt(`Quantité ${t.valeur}:`, t.qte));
+  let newPrix = parseFloat(prompt(`Prix ${t.valeur}:`, t.prix));
+  if(!newQte || !newPrix || newQte <= 0 || newPrix <= 0) return;
+  
+  if(t.type == 'ACHAT') {
+    let frais = R2(newPrix * t.cout / 100);
+    t.qte = newQte;
+    t.prix = newPrix;
+    t.frais = frais;
+    t.pru = R2(newPrix + frais);
+  } else {
+    t.qte = newQte;
+    t.prix = newPrix;
+    let port = {};
+    DB.transactions.filter(x => x.valeur == t.valeur && (x.date < t.date || (x.date == t.date && x.id < t.id))).forEach(tr => {
+      if(!port.qte) port = {qte:0, pru:0, total:0};
+      if(tr.type=='ACHAT') {
+        port.total += tr.pru * tr.qte;
+        port.qte += tr.qte;
+        port.pru = port.qte>0? R2(port.total/port.qte) : 0;
+      } else {
+        port.qte -= tr.qte;
+        port.total = port.qte * port.pru;
+      }
+    });
+    let fraisV = R2(newPrix * t.cout / 100);
+    let prixNet = R2(newPrix - fraisV);
+    let pvBrute = R2((prixNet - port.pru) * newQte);
+    t.frais = fraisV;
+    t.pvBrute = pvBrute;
+    t.taxe = pvBrute>0? R2inf(pvBrute * 0.15) : 0;
+    t.pvNette = R2(pvBrute - t.taxe);
+    t.netEncaisse = R2(prixNet * newQte - t.taxe);
+  }
+  save();
+  renderHistorique();
+}
+
+function simulateLiveMarket() {
+    const priceEl = document.getElementById('price-masi');
+    if(!priceEl) return;
+    setInterval(() => {
+        let currentPrice = parseFloat(priceEl.innerText.replace(/\s/g, '').replace(',','.'));
+        let change = (Math.random() * 10 - 5);
+        let newPrice = currentPrice + change;
+        priceEl.innerText = newPrice.toLocaleString('fr-FR', {minimumFractionDigits: 2});
+        if(change > 0) {
+            priceEl.className = 'price up';
+        } else {
+            priceEl.className = 'price down';
+        }
+    }, 3000);
+}
+
 load();
+function loadSimData() {
+  let sel = document.getElementById('simValeur');
+  sel.innerHTML = '<option value="">Choisir</option>';
+  Object.keys(DB.portefeuille).forEach(v => {
+    if(DB.portefeuille[v].qte > 0) {
+      let p = DB.portefeuille[v];
+      sel.innerHTML += `<option value="${v}">${v} - ${p.qte} titres @ ${fmt(p.pru)}</option>`;
+    }
+  });
+  document.getElementById('resultatSim').innerHTML = '';
+}
+
+function calcSim() {
+  let v = document.getElementById('simValeur').value;
+  let qte = parseFloat(document.getElementById('simQte').value);
+  let prixV = parseFloat(document.getElementById('simPrixV').value);
+  let coutV = parseFloat(document.getElementById('simCoutV').value) || 0;
+  let prixA = parseFloat(document.getElementById('simPrixA').value);
+  let coutA = parseFloat(document.getElementById('simCoutA').value) || 0;
+
+  if(!v ||!qte ||!prixV || qte <= 0) {
+    document.getElementById('resultatSim').innerHTML = '';
+    return;
+  }
+
+  let p = DB.portefeuille[v];
+  if(qte > p.qte) {
+    document.getElementById('resultatSim').innerHTML = '<div class="card" style="background:#ff3b30;color:#fff">Quantité > Stock disponible</div>';
+    return;
+  }
+
+  // VERSION 2 : PRU REEL DU STOCK
+  let fraisV2 = R2(prixV * coutV / 100);
+  let prixNetV2 = R2(prixV - fraisV2);
+  let pvBrute2 = R2((prixNetV2 - p.pru) * qte);
+  let taxe2 = pvBrute2 > 0? R2inf(pvBrute2 * 0.15) : 0;
+  let pvNette2 = R2(pvBrute2 - taxe2);
+  let netEncaisse2 = R2(prixNetV2 * qte - taxe2);
+
+  let html = `<div class="card-dark" style="margin-bottom:12px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">VERSION STOCK - PRU ${fmt(p.pru)}</div>
+    <div style="font-size:12px;opacity:.7">PV NETTE</div>
+    <div style="font-size:28px;font-weight:700;color:${pvNette2>=0?'#10b981':'#ef4444'}">${fmt(pvNette2)} MAD</div>
+    <div style="font-size:12px;opacity:.7;margin-top:8px">NET ENCAISSÉ: ${fmt(netEncaisse2)} MAD</div>
+    <div style="font-size:11px;opacity:.6;margin-top:4px">Taxe: ${fmt(taxe2)} MAD | Frais: ${fmt(fraisV2)} MAD</div>
+  </div>`;
+
+  // VERSION 1 : MANUELLE
+  if(prixA > 0) {
+    let fraisA1 = R2(prixA * coutA / 100);
+    let pruManuel = R2(prixA + fraisA1);
+    let fraisV1 = R2(prixV * coutV / 100);
+    let prixNetV1 = R2(prixV - fraisV1);
+    let pvBrute1 = R2((prixNetV1 - pruManuel) * qte);
+    let taxe1 = pvBrute1 > 0? R2inf(pvBrute1 * 0.15) : 0;
+    let pvNette1 = R2(pvBrute1 - taxe1);
+    let netEncaisse1 = R2(prixNetV1 * qte - taxe1);
+
+    html += `<div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px">VERSION MANUELLE - PRU ${fmt(pruManuel)}</div>
+      <div style="font-size:12px;opacity:.7">PV NETTE</div>
+      <div style="font-size:28px;font-weight:700;color:${pvNette1>=0?'#10b981':'#ef4444'}">${fmt(pvNette1)} MAD</div>
+      <div style="font-size:12px;opacity:.7;margin-top:8px">NET ENCAISSÉ: ${fmt(netEncaisse1)} MAD</div>
+      <div style="font-size:11px;opacity:.6;margin-top:4px">Taxe: ${fmt(taxe1)} MAD | Frais: ${fmt(fraisV1)} MAD</div>
+    </div>`;
+  }
+
+  document.getElementById('resultatSim').innerHTML = html;
+}
+function chargerCours() {
+  fetch('cours.json?t='+Date.now())
+  .then(r => r.json())
+  .then(data => {
+      let html = data.cours.map(c => {
+        let v = parseFloat(String(c.var).replace('%','').replace(',','.'));
+        let cls = v >= 0 ? 'green' : 'red';
+        return `<div class="live-row" style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee">
+          <span>${c.valeur}</span>
+          <span class="${cls}">${c.cours} <small>${c.var}</small></span>
+        </div>`;
+      }).join('');
+      document.getElementById('listeCours').innerHTML = html || 'Aucun cours';
+      document.getElementById('dateMajCours').textContent = data.date;
+    })
+  .catch(e => {
+      document.getElementById('listeCours').innerHTML = 'Cours indisponibles';
+    });
+}
+
+let oldShow = showEcran;
+showEcran = function(nom) {
+  oldShow(nom);
+  if(nom=='ecranMarche') chargerCours();
+}
+
+setInterval(() => {
+  let ecran = document.getElementById('ecranMarche');
+  if(ecran && ecran.classList.contains('active')) {
+    chargerCours();
+  }
+}, 30000);
 </script>
 </body>
 </html>
