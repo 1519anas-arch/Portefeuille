@@ -845,18 +845,24 @@ function calcSim() {
 
   document.getElementById('resultatSim').innerHTML = html;
 }
+// === Fix global anti-doublon ===
+let coursDejaCharge = false;
+let intervalCours = null;
+
+// === Fonction principale : charge 1 seule fois ===
 async function chargerCours() {
   const el = document.getElementById('listeCours');
-  if(!el) return;
+  if(!el || coursDejaCharge) return;
   
-  // On vide et on met les conteneurs pour les widgets
   el.innerHTML = `
     <div id="widget-masi" style="height:130px;margin-bottom:15px;"></div>
     <div id="widget-actions" style="height:450px;"></div>
   `;
   
-  // Widget MASI (indice principal)
+  // Widget MASI
   const scriptMasi = document.createElement('script');
+  scriptMasi.type = 'text/javascript';
+  scriptMasi.async = true;
   scriptMasi.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
   scriptMasi.textContent = JSON.stringify({
     container_id: 'widget-masi',
@@ -870,6 +876,8 @@ async function chargerCours() {
   
   // Widget Actions Maroc
   const scriptActions = document.createElement('script');
+  scriptActions.type = 'text/javascript';
+  scriptActions.async = true;
   scriptActions.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
   scriptActions.textContent = JSON.stringify({
     container_id: 'widget-actions',
@@ -882,28 +890,35 @@ async function chargerCours() {
     defaultColumn: 'overview'
   });
   
-  // On injecte les scripts
   el.appendChild(scriptMasi);
   el.appendChild(scriptActions);
   
-  // Mise à jour de la date
-document.getElementById('dateMajCours').innerText = new Date().toLocaleTimeString();
+  coursDejaCharge = true;
+  majDateCours();
 }
 
-// Fix pour charger les cours quand on ouvre l'onglet
-const oldShow = afficherEcran;
-afficherEcran = function(nom) {
-  oldShow(nom);
-  if(nom === 'ecranMarche') chargerCours();
+function majDateCours() {
+  const dateEl = document.getElementById('dateMajCours');
+  if(dateEl) dateEl.innerText = new Date().toLocaleTimeString();
 }
 
-// Rafraîchissement automatique toutes les 30s
-setInterval(() => {
-  let ecran = document.getElementById('ecranMarche');
+// === Patch afficherEcran : exécuté 1 seule fois ===
+if(!window.ongletMarchePatched) {
+  window.ongletMarchePatched = true;
+  const oldShow = afficherEcran;
+  afficherEcran = function(nom) {
+    oldShow(nom);
+    if(nom === 'ecranMarche') chargerCours();
+  }
+}
+
+// === Rafraîchissement : juste la date ===
+clearInterval(intervalCours);
+intervalCours = setInterval(() => {
+  const ecran = document.getElementById('ecranMarche');
   if(ecran && ecran.classList.contains('active')) {
-    chargerCours();
+    majDateCours();
   }
 }, 30000);
-    }
 </body>
 </html>
