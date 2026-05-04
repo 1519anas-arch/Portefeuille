@@ -887,21 +887,23 @@ async function chargerCours() {
   el.appendChild(scriptActions);
   
   // Mise à jour de la date
-  document.getElementById('dateMajCours').innerText = new Date().toLocaleTimeString();
+document.getElementById('dateMajCours').innerText = new Date().toLocaleTimeString();
 }
 
-let oldShow = showEcran;
-showEcran = function(nom) {
+// Fix pour charger les cours quand on ouvre l'onglet
+const oldShow = afficherEcran;
+afficherEcran = function(nom) {
   oldShow(nom);
-  if(nom=='ecranMarche') chargerCours();
+  if(nom === 'ecranMarche') chargerCours();
 }
 
-// Rafraîchissement automatique toutes les 30 secondes
+// Rafraîchissement automatique toutes les 30s
 setInterval(() => {
   let ecran = document.getElementById('ecranMarche');
   if(ecran && ecran.classList.contains('active')) {
     chargerCours();
   }
 }, 30000);
+    }
 </body>
 </html>
