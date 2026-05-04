@@ -903,14 +903,23 @@ function majDateCours() {
 }
 
 // === Patch afficherEcran : exécuté 1 seule fois ===
-if(!window.ongletMarchePatched) {
-  window.ongletMarchePatched = true;
-  const oldShow = afficherEcran;
-  afficherEcran = function(nom) {
-    oldShow(nom);
-    if(nom === 'ecranMarche') chargerCours();
+// === Patch afficherEcran : attend que la fonction existe ===
+function patcherOnglets() {
+  if(typeof afficherEcran === 'undefined') {
+    setTimeout(patcherOnglets, 50);
+    return;
+  }
+  
+  if(!window.ongletMarchePatched) {
+    window.ongletMarchePatched = true;
+    const oldShow = afficherEcran;
+    afficherEcran = function(nom) {
+      oldShow(nom);
+      if(nom === 'ecranMarche') chargerCours();
+    }
   }
 }
+patcherOnglets();
 
 // === Rafraîchissement : juste la date ===
 clearInterval(intervalCours);
