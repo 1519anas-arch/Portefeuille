@@ -83,8 +83,8 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
 <div class="ecran page" id="ecranMarche">
   <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
   <h2>Marché en direct</h2>
-  <div class="card">
-    <div id="listeCours">Chargement...</div>
+  <div class="card" style="padding:0;overflow:hidden;">
+      <div id="listeCours" style="min-height:600px;">Chargement...</div>
     <div style="font-size:11px;color:#666;margin-top:8px;text-align:right">
       MÀJ : <span id="dateMajCours">-</span>
     </div>
