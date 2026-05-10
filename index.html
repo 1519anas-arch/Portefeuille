@@ -850,15 +850,19 @@ async function chargerCours() {
   if (!el) return;
 
   el.innerHTML = `
-    <div class="tradingview-widget-container">
-      <div id="tv-widget"></div>
+    <div class="tradingview-widget-container" style="height:600px;">
+      <div id="tv-masi"></div>
+    </div>
+    <div class="tradingview-widget-container" style="height:600px;margin-top:15px;">
+      <div id="tv-screener"></div>
     </div>
   `;
 
-  const script = document.createElement('script');
-  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
-  script.async = true;
-  script.innerHTML = JSON.stringify({
+  // Widget MASI
+  const s1 = document.createElement('script');
+  s1.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
+  s1.async = true;
+  s1.innerHTML = JSON.stringify({
     colorTheme: "light",
     locale: "fr",
     width: "100%",
@@ -866,14 +870,105 @@ async function chargerCours() {
     tabs: [{
       title: "Maroc",
       symbols: [
-        {s: "CASABLANCA:MASI", d: "MASI"},
-        {s: "CASABLANCA:ATW", d: "Attijariwafa"},
-        {s: "CASABLANCA:BCP", d: "BCP"}
-      ]
+  {s: "CASABLANCA:MASI", d: "MASI"},
+  {s: "CASABLANCA:ADH", d: "Addoha"},
+  {s: "CASABLANCA:AFMA", d: "AFMA"},
+  {s: "CASABLANCA:AFI", d: "Afric Industries"},
+  {s: "CASABLANCA:GAZ", d: "Afriquia Gaz"},
+  {s: "CASABLANCA:AGMA", d: "Agma"},
+  {s: "CASABLANCA:AKDI", d: "Akdital"},
+  {s: "CASABLANCA:ALL", d: "Alliances"},
+  {s: "CASABLANCA:ALM", d: "Aluminium Maroc"},
+  {s: "CASABLANCA:ARD", d: "Aradei Capital"},
+  {s: "CASABLANCA:ATL", d: "Atlantasanad"},
+  {s: "CASABLANCA:ATW", d: "Attijariwafa Bank"},
+  {s: "CASABLANCA:AUTO", d: "Auto Hall"},
+  {s: "CASABLANCA:NEJ", d: "Auto Nejma"},
+  {s: "CASABLANCA:BAL", d: "Balima"},
+  {s: "CASABLANCA:BCP", d: "BCP"},
+  {s: "CASABLANCA:BMCI", d: "BMCI"},
+  {s: "CASABLANCA:BOA", d: "Bank of Africa"},
+  {s: "CASABLANCA:CAR", d: "Cartier Saada"},
+  {s: "CASABLANCA:CAS", d: "Cash Plus"},
+  {s: "CASABLANCA:CDM", d: "CDM"},
+  {s: "CASABLANCA:CFG", d: "CFG Bank"},
+  {s: "CASABLANCA:CIH", d: "CIH Bank"},
+  {s: "CASABLANCA:CIM", d: "Ciments Maroc"},
+  {s: "CASABLANCA:CMGP", d: "CMGP Group"},
+  {s: "CASABLANCA:CMT", d: "CMT"},
+  {s: "CASABLANCA:COL", d: "Colorado"},
+  {s: "CASABLANCA:CSR", d: "COSUMAR"},
+  {s: "CASABLANCA:CTM", d: "CTM"},
+  {s: "CASABLANCA:DARI", d: "Dari Couspate"},
+  {s: "CASABLANCA:DHO", d: "Delta Holding"},
+  {s: "CASABLANCA:DIS", d: "Disty Technologies"},
+  {s: "CASABLANCA:DIW", d: "DISWAY"},
+  {s: "CASABLANCA:ENN", d: "Ennakl"},
+  {s: "CASABLANCA:EQD", d: "EQDOM"},
+  {s: "CASABLANCA:FBR", d: "Fenie Brossette"},
+  {s: "CASABLANCA:HPS", d: "HPS"},
+  {s: "CASABLANCA:IBC", d: "IBMaroc.com"},
+  {s: "CASABLANCA:IMR", d: "Immorente"},
+  {s: "CASABLANCA:INV", d: "INVOLYS"},
+  {s: "CASABLANCA:JET", d: "Jet Contractors"},
+  {s: "CASABLANCA:LBV", d: "Label Vie"},
+  {s: "CASABLANCA:LHM", d: "LafargeHolcim"},
+  {s: "CASABLANCA:LES", d: "Lesieur Cristal"},
+  {s: "CASABLANCA:M2M", d: "M2M Group"},
+  {s: "CASABLANCA:MOX", d: "Maghreb Oxygene"},
+  {s: "CASABLANCA:MAB", d: "Maghrebail"},
+  {s: "CASABLANCA:MNG", d: "Managem"},
+  {s: "CASABLANCA:MAL", d: "Maroc Leasing"},
+  {s: "CASABLANCA:IAM", d: "Maroc Telecom"},
+  {s: "CASABLANCA:MDP", d: "Med Paper"},
+  {s: "CASABLANCA:MIC", d: "Microdata"},
+  {s: "CASABLANCA:MSA", d: "Mutandis"},
+  {s: "CASABLANCA:OUL", d: "Oulmes"},
+  {s: "CASABLANCA:PPH", d: "PROMOPHARM"},
+  {s: "CASABLANCA:REB", d: "Rebab Company"},
+  {s: "CASABLANCA:RDS", d: "Resid Dar Saada"},
+  {s: "CASABLANCA:RIS", d: "Risma"},
+  {s: "CASABLANCA:S2M", d: "S2M"},
+  {s: "CASABLANCA:SAL", d: "SALAFIN"},
+  {s: "CASABLANCA:SAN", d: "Sanlam Maroc"},
+  {s: "CASABLANCA:SGT", d: "SGTM"},
+  {s: "CASABLANCA:SMI", d: "SMI"},
+  {s: "CASABLANCA:SNA", d: "SNA"},
+  {s: "CASABLANCA:SNP", d: "SNEP"},
+  {s: "CASABLANCA:SDP", d: "SODEP"},
+  {s: "CASABLANCA:SNS", d: "Sonasid"},
+  {s: "CASABLANCA:STH", d: "SOTHEMA"},
+  {s: "CASABLANCA:SRM", d: "SRM"},
+  {s: "CASABLANCA:SBM", d: "Ste Boissons"},
+  {s: "CASABLANCA:STR", d: "STROC Industries"},
+  {s: "CASABLANCA:TQM", d: "TAQA Morocco"},
+  {s: "CASABLANCA:TGC", d: "TGCC"},
+  {s: "CASABLANCA:TTE", d: "TotalEnergie MM"},
+  {s: "CASABLANCA:UNI", d: "Unimer"},
+  {s: "CASABLANCA:VIC", d: "Vicenne"},
+  {s: "CASABLANCA:WAA", d: "Wafa Assur"},
+  {s: "CASABLANCA:ZEL", d: "Zellidja"}
+]
     }]
   });
+  document.getElementById('tv-masi').appendChild(s1);
 
-  document.getElementById('tv-widget').appendChild(script);
+  // Widget Screener toutes valeurs
+  const s2 = document.createElement('script');
+  s2.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
+  s2.async = true;
+  s2.innerHTML = JSON.stringify({
+    width: "100%",
+    height: "600",
+    defaultColumn: "overview",
+    defaultScreen: "most_capitalized",
+    market: "morocco",
+    showToolbar: true,
+    colorTheme: "light",
+    locale: "fr"
+  });
+  document.getElementById('tv-screener').appendChild(s2);
+
   document.getElementById('dateMajCours').innerText = new Date().toLocaleTimeString();
 }
 
