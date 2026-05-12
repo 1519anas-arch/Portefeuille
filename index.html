@@ -289,35 +289,34 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
   </div>
 </div>
 <div class="ecran page" id="ecranHistorique">
-  <button class="back-btn" onclick="showEcran('home')">← Retour</button>
-  <div class="nav-top"><h1>Historique Tactique</h1></div>
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Historique</h1></div>
 
-  <div class="card" style="padding: 10px; background: transparent; border: none;">
-    <div id="gridValeursHistorique" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-      </div>
-  </div>
-
-  <div class="card" id="panelDetailsHistorique" style="margin-top: 10px;">
-    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-      <div style="flex: 1;">
-        <label>Type</label>
-        <select id="filtreType" onchange="renderHistorique()" style="width: 100%; padding: 8px; background: #000; color: #fff; border: 1px solid var(--border); border-radius: 6px;">
-          <option value="">Tous</option>
-          <option value="ACHAT">Achats</option>
-          <option value="VENTE">Ventes</option>
-        </select>
-      </div>
-      <div style="flex: 1;">
-        <label>Date</label>
-        <input type="date" id="filtreDate" onchange="renderHistorique()" style="width: 100%; padding: 8px; background: #000; color: #fff; border: 1px solid var(--border); border-radius: 6px;">
-      </div>
+  <div class="grid-container" id="gridHistoriqueValeurs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px;">
     </div>
 
+  <div class="card" id="detailHistorique" style="margin-top: 10px;">
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1;">
+            <label>Type</label>
+            <select id="filtreType" onchange="renderHistorique()" style="width:100%">
+              <option value="">Tous</option>
+              <option value="ACHAT">Achats</option>
+              <option value="VENTE">Ventes</option>
+            </select>
+        </div>
+        <div style="flex: 1;">
+            <label>Date</label>
+            <input type="date" id="filtreDate" onchange="renderHistorique()" style="width:100%">
+        </div>
+    </div>
+    
     <div class="table-wrap" id="tableHistorique">
-        <p style="text-align:center; color:#666; padding: 20px;">Sélectionnez une valeur en haut pour voir les détails</p>
+        <p style="text-align:center; color:#666; padding:20px;">Cliquez sur une tuile pour filtrer</p>
     </div>
   </div>
 </div>
+    
 
 <script>
 // Logique pour injecter les tuiles dans l'historique
