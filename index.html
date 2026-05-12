@@ -291,74 +291,20 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
 <div class="ecran page" id="ecranHistorique">
   <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
   <div class="nav-top"><h1>Historique</h1></div>
-
-  <div class="grid-container" id="gridHistoriqueValeurs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px;">
-    </div>
-
-  <div class="card" id="detailHistorique" style="margin-top: 10px;">
-    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <div style="flex: 1;">
-            <label>Type</label>
-            <select id="filtreType" onchange="renderHistorique()" style="width:100%">
-              <option value="">Tous</option>
-              <option value="ACHAT">Achats</option>
-              <option value="VENTE">Ventes</option>
-            </select>
-        </div>
-        <div style="flex: 1;">
-            <label>Date</label>
-            <input type="date" id="filtreDate" onchange="renderHistorique()" style="width:100%">
-        </div>
-    </div>
-    
-    <div class="table-wrap" id="tableHistorique">
-        <p style="text-align:center; color:#666; padding:20px;">Cliquez sur une tuile pour filtrer</p>
-    </div>
+  <div class="card">
+    <label>Type</label>
+    <select id="filtreType" onchange="renderHistorique()">
+      <option value="">Tous</option>
+      <option value="ACHAT">Achats</option>
+      <option value="VENTE">Ventes</option>
+    </select>
+    <label>Valeur</label>
+    <select id="filtreValeur" onchange="renderHistorique()"></select>
+    <label>Date</label>
+    <input type="date" id="filtreDate" onchange="renderHistorique()">
+    <div class="table-wrap" style="margin-top:12px" id="tableHistorique"></div>
   </div>
 </div>
-      <div id="gridHistoriqueValeurs" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:10px;"></div>
-    
-
-<script>
-// Logique pour injecter les tuiles dans l'historique
-function updateHistoriqueGrid() {
-    const grid = document.getElementById('gridValeursHistorique');
-    const valeurs = [...new Set(Object.keys(db))]; // Récupère tes valeurs (AWB, RISMA...)
-    
-    grid.innerHTML = "";
-    valeurs.forEach(v => {
-        const tile = document.createElement('div');
-        tile.className = "category-tile"; // On garde ton style CSS
-        tile.style.aspectRatio = "1/1";
-        tile.style.background = "var(--surface)";
-        tile.style.border = "1px solid var(--border)";
-        tile.style.borderRadius = "10px";
-        tile.style.display = "flex";
-        tile.style.alignItems = "center";
-        tile.style.justifyContent = "center";
-        tile.style.fontWeight = "bold";
-        tile.style.fontSize = "0.8rem";
-        
-        tile.innerText = v;
-        tile.onclick = () => {
-            // On active le filtre et on scrolle
-            document.querySelectorAll('.category-tile').forEach(t => t.style.borderColor = "var(--border)");
-            tile.style.borderColor = "var(--accent)";
-            
-            // On simule la sélection dans ton ancien select pour garder ta logique renderHistorique
-            const select = document.getElementById('filtreValeur');
-            // Assure-toi que ce select existe encore (même caché) ou adapte ta fonction render
-            select.value = v; 
-            renderHistorique();
-            
-            // Scroll doux vers le tableau
-            document.getElementById('panelDetailsHistorique').scrollIntoView({behavior: 'smooth'});
-        };
-        grid.appendChild(tile);
-    });
-}
-</script>
-    
 
 <script>
 let DB = {invest:0, mouvements:[], transactions:[], cours:{}};
@@ -655,21 +601,6 @@ function simuVente() {
   document.getElementById('gainNetSimu').textContent = fmt(netEncaisse)+' MAD';
   document.getElementById('detailSimu').innerHTML = `PRU: ${fmt(port.pru)} | PV: ${fmt(pvNette)} | Taxe: ${fmt(taxe)}`;
 }
-   function showEcran(id) {
-  // 1. Tes lignes existantes qui cachent les pages
-  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-  
-  // 2. La ligne qui affiche la page demandée
-  document.getElementById('ecran' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = 'block';
-
-  // 3. C'EST ICI QUE TU AJOUTES LE BLOC POUR L'HISTORIQUE :
-  if (id === 'historique') {
-      window.valeurSelectionneeHisto = ""; // On réinitialise pour tout voir au début
-      updateHistoriqueGrid(); // On dessine les tuiles rouges
-      renderHistorique();     // On dessine le tableau
-  }
-}
-    
 
 function validerVente() {
   let v = document.getElementById('valeurVente').value;
@@ -797,7 +728,7 @@ function importExcel() {
 
 function triHistorique() {
   let fType = document.getElementById('filtreType').value;
-  let fVal = window.valeurSelectionneeHisto || ""; 
+  let fVal = document.getElementById('filtreValeur').value;
   let fDate = document.getElementById('filtreDate').value;
   let data = DB.transactions.filter(t=>{
     if(fType && t.type!=fType) return false;
@@ -807,41 +738,6 @@ function triHistorique() {
   });
   return data.sort((a,b)=>b.date.localeCompare(a.date) || b.id-a.id);
 }
-    function genererTuilesHisto() {
-    const grid = document.getElementById('gridHistoriqueValeurs');
-    if(!grid) return;
-
-    // On récupère les noms uniques des actions dans tes transactions
-    const valeurs = [...new Set(DB.transactions.map(t => t.valeur))];
-    
-    grid.innerHTML = "";
-    valeurs.forEach(v => {
-        const div = document.createElement('div');
-        div.className = "category-tile"; // Ton style de bouton rouge
-        div.style.cssText = "background:#12141c; border:1px solid #333; padding:15px; border-radius:10px; text-align:center; color:white; font-weight:bold; cursor:pointer;";
-        div.innerText = v;
-        
-        div.onclick = () => {
-            window.valeurSelectionneeHisto = v; // On stocke le choix
-            // On remet toutes les bordures à la normale et on souligne la sélection
-            document.querySelectorAll('.category-tile').forEach(t => t.style.borderColor = "#333");
-            div.style.borderColor = "#d4af37";
-            
-            renderHistorique(); // On relance l'affichage du tableau
-        };
-        grid.appendChild(div);
-    });
-    }
-    function showEcran(id) {
-    // Ton code habituel pour cacher/afficher les pages...
-    
-    if(id === 'historique') {
-        window.valeurSelectionneeHisto = ""; // Reset du filtre au départ
-        genererTuilesHisto(); // On dessine les boutons rouges
-        renderHistorique();   // On affiche tout le tableau par défaut
-    }
-    }
-    
 function renderHistorique() {
   let data = triHistorique();
   let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th><th>Action</th></tr>';
