@@ -50,6 +50,17 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
 .live-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee}
 .price{font-weight:bold;font-family:monospace;transition:all 0.3s}
 .up{color:#27ae60}.down{color:#e74c3c}
+    .upload-card { background: white; padding: 25px; border-radius: 12px; border: 2px dashed #cbd5e1; text-align: center; margin-bottom: 20px; cursor: pointer; }
+.results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+.score-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-top: 6px solid; }
+.card-realise { border-top-color: #059669; }
+.card-encours { border-top-color: #2563eb; }
+.score-card h2 { margin: 0; font-size: 0.85rem; color: #64748b; text-transform: uppercase; }
+.main-val { font-size: 1.8rem; font-weight: 800; margin: 10px 0; display: block; }
+.details { font-size: 0.8rem; border-top: 1px solid #f1f5f9; padding-top: 10px; }
+.row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.val-neg { color: #dc2626; }
+.val-pos { color: #059669; }
 </style>
 </head>
 <body>
@@ -68,7 +79,8 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
         <button class="menu-btn" onclick="showEcran('historique')">HISTORIQUE</button>
         <button class="menu-btn" onclick="showEcran('invest')">INVEST</button>
     <button class="menu-btn" onclick="showEcran('simulation')" style="grid-column: 1 / -1; justify-self: center; width: 60%;">SIMULATION</button>
-  </div>
+<button class="menu-btn" onclick="showEcran('encaissement')" style="grid-column: 1 / -1; justify-self: center; width: 60%;">💰 PILOTAGE ENCAISSEMENT</button>
+    </div>
     </div>
     <div class="basmala-zone">
         <div class="basmala">باسم الله الرحمن الرحيم<br> و الصلاة والسلام <br> على أشرف المرسلين</div>
@@ -117,6 +129,43 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
   <div class="nav-top"><h1>Portefeuille</h1></div>
   <div id="listePortefeuille"></div>
 </div>
+    <div class="ecran page" id="ecranEncaissement">
+  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Pilotage Encaissement</h1></div>
+
+  <div class="card upload-card" onclick="document.getElementById('fileInEncaisse').click()">
+    <h2 style="color:var(--primary); margin:0;">Charger Classeur3</h2>
+    <p style="font-size:0.9rem;">Fichier Excel avec onglets ACHAT, VENTES, LATTENTE</p>
+    <input type="file" id="fileInEncaisse" hidden accept=".xlsx">
+  </div>
+
+  <div id="resultsEncaisse" class="results-grid" style="display:none">
+    <div class="score-card card-realise">
+      <h2>Résultat Réalisé</h2>
+      <span id="res-realise" class="main-val">0.00 Dh</span>
+      <div class="details">
+        <div class="row"><span>Achat Brut (E) :</span> <span id="r-achat" class="val-neg"></span></div>
+        <div class="row"><span>Frais Achat (H) :</span> <span id="r-f-acq" class="val-neg"></span></div>
+        <div class="row"><span>Frais Vente (G) :</span> <span id="r-f-ven" class="val-neg"></span></div>
+        <div class="row"><span>Taxes 15% (H) :</span> <span id="r-tax" class="val-neg"></span></div>
+        <div class="row" style="margin-top:8px; border-top:1px dashed #ddd; padding-top:4px;">
+          <span>Encaissement (I) :</span> <span id="r-credit" class="val-pos"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-card card-encours">
+      <h2>Résultat Global (+ Latente)</h2>
+      <span id="res-global" class="main-val">0.00 Dh</span>
+      <div class="details">
+        <div class="row"><span>Crédit Latent (I) :</span> <span id="g-lat-val" class="val-pos"></span></div>
+        <div class="row"><span>Frais Latents (G) :</span> <span id="g-f-lat" class="val-neg"></span></div>
+        <div class="row"><span>Taxes Latentes (H) :</span> <span id="g-t-lat" class="val-neg"></span></div>
+        <p style="font-size:0.7rem; color:#94a3b8; margin-top:10px;">Simulation : Vente totale immédiate des lignes en attente.</p>
+      </div>
+    </div>
+  </div>
+    </div>
 <div class="ecran" id="ecranSimulation">
       <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
   <h2>Simulation Vente Stock</h2>
@@ -982,6 +1031,78 @@ setInterval(() => {
   let ecran = document.getElementById('ecranMarche');
   if (ecran && ecran.classList.contains('active')) chargerCours();
 }, 30000);
+    // PILOTAGE ENCAISSEMENT
+document.getElementById('fileInEncaisse').addEventListener('change', function(e) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const wb = XLSX.read(new Uint8Array(event.target.result), {type: 'array'});
+
+        let r = { aE:0, aH:0, vG:0, vH:0, vI:0 };
+        let l = { lG:0, lH:0, lI:0 };
+
+        const getSheet = (name) => {
+            const found = wb.SheetNames.find(n => n.toUpperCase() === name.toUpperCase());
+            return found? wb.Sheets[found] : null;
+        };
+
+        const s_achat = getSheet("ACHAT");
+        const s_vente = getSheet("VENTES");
+        const s_lat = getSheet("LATTENTE");
+
+        if(s_achat) {
+            XLSX.utils.sheet_to_json(s_achat).forEach(row => {
+                r.aE += parseFloat(row['QTE * PRIX'] || 0);
+                r.aH += parseFloat(row['CT TTC'] || 0);
+            });
+        }
+
+        if(s_vente) {
+            XLSX.utils.sheet_to_json(s_vente).forEach(row => {
+                r.vG += parseFloat(row['CT TTC'] || 0);
+                r.vH += parseFloat(row['TAXE 15%'] || 0);
+                r.vI += parseFloat(row['CR COMPTE'] || 0);
+            });
+        }
+
+        if(s_lat) {
+            XLSX.utils.sheet_to_json(s_lat).forEach(row => {
+                l.lG += parseFloat(row['CT TTC'] || 0);
+                l.lH += parseFloat(row['TAXE 15%'] || 0);
+                l.lI += parseFloat(row['CR COMPTE'] || 0);
+            });
+        }
+
+        calculerEncaissement(r, l);
+    };
+    reader.readAsArrayBuffer(e.target.files[0]);
+});
+
+function calculerEncaissement(r, l) {
+    document.getElementById('resultsEncaisse').style.display = 'grid';
+
+    // 1. RÉALISÉ
+    const deb_r = r.aE + r.aH + r.vG + r.vH;
+    const net_r = r.vI - deb_r;
+
+    document.getElementById('res-realise').innerText = net_r.toFixed(2) + " Dh";
+    document.getElementById('res-realise').style.color = net_r >= 0? "#059669" : "#dc2626";
+    document.getElementById('r-achat').innerText = "-" + r.aE.toFixed(2);
+    document.getElementById('r-f-acq').innerText = "-" + r.aH.toFixed(2);
+    document.getElementById('r-f-ven').innerText = "-" + r.vG.toFixed(2);
+    document.getElementById('r-tax').innerText = "-" + r.vH.toFixed(2);
+    document.getElementById('r-credit').innerText = "+" + r.vI.toFixed(2);
+
+    // 2. GLOBAL
+    const deb_total = deb_r + l.lG + l.lH;
+    const cre_total = r.vI + l.lI;
+    const net_total = cre_total - deb_total;
+
+    document.getElementById('res-global').innerText = net_total.toFixed(2) + " Dh";
+    document.getElementById('res-global').style.color = net_total >= 0? "#2563eb" : "#dc2626";
+    document.getElementById('g-lat-val').innerText = "+" + l.lI.toFixed(2);
+    document.getElementById('g-f-lat').innerText = "-" + l.lG.toFixed(2);
+    document.getElementById('g-t-lat').innerText = "-" + l.lH.toFixed(2);
+}
 </script>
 </body>
 </html>
