@@ -138,8 +138,8 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
     <p style="font-size:0.9rem;">Fichier Excel avec onglets ACHAT, VENTES, LATTENTE</p>
     <input type="file" id="fileInEncaisse" hidden accept=".xlsx">
   </div>
-<div id="resultsEncaisse" class="results-grid" style="display:grid">
 
+  <div id="resultsEncaisse" class="results-grid" style="display:none">
     <div class="score-card card-realise">
       <h2>Résultat Réalisé</h2>
       <span id="res-realise" class="main-val">0.00 Dh</span>
@@ -1025,65 +1025,84 @@ let oldShow = showEcran;
 showEcran = function(nom) {
   oldShow(nom);
   if (nom == 'ecranMarche') chargerCours();
-  if (nom == 'encaissement') renderEncaissement();
 };
 
 setInterval(() => {
   let ecran = document.getElementById('ecranMarche');
   if (ecran && ecran.classList.contains('active')) chargerCours();
 }, 30000);
-// PILOTAGE ENCAISSEMENT - VERSION DB
-function renderEncaissement() {
-    // 1. RÉALISÉ - depuis DB.transactions
-    let achats = DB.transactions.filter(t => t.type == 'ACHAT');
-    let ventes = DB.transactions.filter(t => t.type == 'VENTE');
+    // PILOTAGE ENCAISSEMENT
+document.getElementById('fileInEncaisse').addEventListener('change', function(e) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const wb = XLSX.read(new Uint8Array(event.target.result), {type: 'array'});
 
-    let aE = achats.reduce((s, t) => s + (t.prix * t.qte), 0);
-    let aH = achats.reduce((s, t) => s + t.frais, 0);
-    let vG = ventes.reduce((s, t) => s + t.frais, 0);
-    let vH = ventes.reduce((s, t) => s + t.taxe, 0);
-    let vI = ventes.reduce((s, t) => s + t.netEncaisse, 0);
+        let r = { aE:0, aH:0, vG:0, vH:0, vI:0 };
+        let l = { lG:0, lH:0, lI:0 };
 
-    const deb_r = aE + aH + vG + vH;
-    const net_r = vI - deb_r;
+        const getSheet = (name) => {
+            const found = wb.SheetNames.find(n => n.toUpperCase() === name.toUpperCase());
+            return found? wb.Sheets[found] : null;
+        };
 
-    document.getElementById('res-realise').innerText = fmt(net_r) + " MAD";
-    document.getElementById('res-realise').style.color = net_r >= 0? "#059669" : "#dc2626";
-    document.getElementById('r-achat').innerText = "-" + fmt(aE);
-    document.getElementById('r-f-acq').innerText = "-" + fmt(aH);
-    document.getElementById('r-f-ven').innerText = "-" + fmt(vG);
-    document.getElementById('r-tax').innerText = "-" + fmt(vH);
-    document.getElementById('r-credit').innerText = "+" + fmt(vI);
+        const s_achat = getSheet("ACHAT");
+        const s_vente = getSheet("VENTES");
+        const s_lat = getSheet("LATTENTE");
 
-    // 2. LATENTE - depuis DB.portefeuille + DB.cours
-    let lG = 0, lH = 0, lI = 0;
-
-    Object.keys(DB.portefeuille).forEach(v => {
-        let p = DB.portefeuille[v];
-        let cours = DB.cours[v] || p.pru;
-        if (p.qte > 0 && cours > 0) {
-            let fraisV = R2(cours * p.qte * 0.11 / 100);
-            let prixNet = R2(cours - fraisV / p.qte);
-            let pvBrute = R2((prixNet - p.pru) * p.qte);
-            let taxe = pvBrute > 0? R2inf(pvBrute * 0.15) : 0;
-
-            lG += fraisV;
-            lH += taxe;
-            lI += R2(prixNet * p.qte - taxe);
+        if(s_achat) {
+            XLSX.utils.sheet_to_json(s_achat).forEach(row => {
+                r.aE += parseFloat(row['QTE * PRIX'] || 0);
+                r.aH += parseFloat(row['CT TTC'] || 0);
+            });
         }
-    });
 
-    const deb_total = deb_r + lG + lH;
-    const cre_total = vI + lI;
+        if(s_vente) {
+            XLSX.utils.sheet_to_json(s_vente).forEach(row => {
+                r.vG += parseFloat(row['CT TTC'] || 0);
+                r.vH += parseFloat(row['TAXE 15%'] || 0);
+                r.vI += parseFloat(row['CR COMPTE'] || 0);
+            });
+        }
+
+        if(s_lat) {
+            XLSX.utils.sheet_to_json(s_lat).forEach(row => {
+                l.lG += parseFloat(row['CT TTC'] || 0);
+                l.lH += parseFloat(row['TAXE 15%'] || 0);
+                l.lI += parseFloat(row['CR COMPTE'] || 0);
+            });
+        }
+
+        calculerEncaissement(r, l);
+    };
+    reader.readAsArrayBuffer(e.target.files[0]);
+});
+
+function calculerEncaissement(r, l) {
+    document.getElementById('resultsEncaisse').style.display = 'grid';
+
+    // 1. RÉALISÉ
+    const deb_r = r.aE + r.aH + r.vG + r.vH;
+    const net_r = r.vI - deb_r;
+
+    document.getElementById('res-realise').innerText = net_r.toFixed(2) + " Dh";
+    document.getElementById('res-realise').style.color = net_r >= 0? "#059669" : "#dc2626";
+    document.getElementById('r-achat').innerText = "-" + r.aE.toFixed(2);
+    document.getElementById('r-f-acq').innerText = "-" + r.aH.toFixed(2);
+    document.getElementById('r-f-ven').innerText = "-" + r.vG.toFixed(2);
+    document.getElementById('r-tax').innerText = "-" + r.vH.toFixed(2);
+    document.getElementById('r-credit').innerText = "+" + r.vI.toFixed(2);
+
+    // 2. GLOBAL
+    const deb_total = deb_r + l.lG + l.lH;
+    const cre_total = r.vI + l.lI;
     const net_total = cre_total - deb_total;
 
-    document.getElementById('res-global').innerText = fmt(net_total) + " MAD";
+    document.getElementById('res-global').innerText = net_total.toFixed(2) + " Dh";
     document.getElementById('res-global').style.color = net_total >= 0? "#2563eb" : "#dc2626";
-    document.getElementById('g-lat-val').innerText = "+" + fmt(lI);
-    document.getElementById('g-f-lat').innerText = "-" + fmt(lG);
-    document.getElementById('g-t-lat').innerText = "-" + fmt(lH);
-    }
-
+    document.getElementById('g-lat-val').innerText = "+" + l.lI.toFixed(2);
+    document.getElementById('g-f-lat').innerText = "-" + l.lG.toFixed(2);
+    document.getElementById('g-t-lat').innerText = "-" + l.lH.toFixed(2);
+}
 </script>
 </body>
 </html>
