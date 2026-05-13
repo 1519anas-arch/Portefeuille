@@ -630,7 +630,7 @@ let taxeLigne = baseTaxe > 0 ? R2(baseTaxe * 0.15) : 0;
   let netEncaisse = R2((p * q) - (fraisV * q) - taxeTotale);
   let pvNette = R2(netEncaisse - (port.pru * q));
 }
-    });
+
     DB.solde = R2(Number(DB.solde) + netEncaisse);
     save();
     showEcran('home');
