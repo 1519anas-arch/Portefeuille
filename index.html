@@ -1109,36 +1109,36 @@ function majGlobalPilotage() {
     let totalLatentDebit = 0;
     let totalLatentCredit = 0;
     let inputs = document.querySelectorAll('.cours-pilote');
+    
     inputs.forEach(inp => {
         let titre = inp.getAttribute('data-titre');
         let p = DB.portefeuille[titre];
-        let cours = parseFloat(inp.value) || 0;  
-        if(cours > 0) {
+        let cours = parseFloat(inp.value) || 0;
+        if(p && cours > 0) {
             let brutVente = cours * p.qte;
-            let fraisV = R2(brutVente * 0.0011); // Simulation frais 0.11%
+            let fraisV = R2(brutVente * 0.0011);
             let gainNet = (brutVente - fraisV) - (p.pru * p.qte);
             let taxe = gainNet > 0 ? R2(gainNet * 0.15) : 0;
             let debitL = (p.pru * p.qte) + fraisV + taxe;
             let netL = brutVente - debitL;
-            document.getElementById('res-l-' + titre).innerText = R2(netL);
-            document.getElementById('res-l-' + titre).style.color = netL >= 0 ? 'green' : 'red';
+            let el = document.getElementById('res-l-' + titre);
+            if(el){ el.innerText = R2(netL); el.style.color = netL >= 0 ? 'green' : 'red'; }
             totalLatentCredit += brutVente;
             totalLatentDebit += debitL;
         }
     });
-  // Mise à jour des compteurs globaux (Réalisé + Latent saisi)
-    let netR = parseFloat(document.getElementById('res-realise').innerText);
-    let netL_Total = totalLatentCredit - totalLatentDebit;
+
+    let resR = document.getElementById('res-realise');
+    let netR = resR ? parseFloat(resR.innerText) || 0 : 0;
     let global = netR + (totalLatentCredit - totalLatentDebit);
-    document.getElementById('res-global').innerText = R2(global) + " Dh";
-    document.getElementById('res-global').style.color = global >= 0 ? '#059669' : '#dc2626';
+    let resG = document.getElementById('res-global');
+    if(resG){ resG.innerText = R2(global) + " Dh"; resG.style.color = global >= 0 ? '#059669' : '#dc2626'; }
 }
-// Appeler la fonction quand on affiche l'écran
-let oldShowPilote = showEcran;
-showEcran = function(nom) {
-    oldShowPilote(nom);
-    if(nom == 'ecranEncaisse') renderPilotage(); // Remplace par le nom exact de ton écran
-};
+
+function ouvrirEncaissement() {
+    showEcran('ecranEncaisse');
+    renderPilotage();
+}
 </script>
 </body>
 </html>
