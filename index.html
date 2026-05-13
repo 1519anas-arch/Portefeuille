@@ -253,7 +253,11 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
       <div style="font-size:28px;font-weight:700;margin:8px 0" id="pruCalcule">0.00 MAD</div>
       <div style="font-size:12px;opacity:.7">Total: <span id="totalAchat">0.00</span> MAD</div>
     </div>
-    <button class="btn" style="margin-top:12px" onclick="validerAchat()">Valider Achat</button>
+    <div style="display: flex; gap: 10px; margin-top: 12px;">
+    <button class="btn" style="flex: 1; background-color: #28a745;" onclick="validerAchat()">Valider</button>
+    <button class="btn" style="flex: 1; background-color: #dc3545;" onclick="resetAchat()">Réinitialiser</button>
+    </div>
+      
   </div>
 </div>
 <div class="ecran page" id="ecranVente">
@@ -271,8 +275,11 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
       <div style="font-size:28px;font-weight:700;margin:8px 0" id="gainNetSimu">0.00 MAD</div>
       <div style="font-size:11px;opacity:.7;text-align:left;margin-top:8px" id="detailSimu"></div>
     </div>
-    <button class="btn" style="margin-top:12px" onclick="validerVente()">Valider Vente</button>
-  </div>
+<div style="display: flex; gap: 10px; margin-top: 12px;">
+    <button class="btn" style="flex: 1; background-color: #28a745;" onclick="validerVente()">Valider</button>
+    <button class="btn" style="flex: 1; background-color: #dc3545;" onclick="resetVente()">Réinitialiser</button>
+</div>
+</div>
 </div>
 <div class="ecran page" id="ecranExcel">
   <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
@@ -572,7 +579,12 @@ function validerAchat() {
   save();
   showEcran('home');
 }
-
+function resetAchat() {
+    document.getElementById('qteAchat').value = '';
+    document.getElementById('prixAchat').value = '';
+    document.getElementById('totalAchat').textContent = '0.00';
+}
+    
 function updateStock() {
   let v = document.getElementById('valeurVente').value;
   let p = DB.portefeuille[v];
@@ -592,12 +604,12 @@ function simuVente() {
     document.getElementById('detailSimu').textContent = '';
     return;
   }
-  let fraisV = R2(p * c / 100);
-  let prixNet = R2(p - fraisV);
-  let pvBrute = R2((prixNet - port.pru) * q);
-  let taxe = pvBrute>0? R2inf(pvBrute * 0.15) : 0;
-  let pvNette = R2(pvBrute - taxe);
-  let netEncaisse = R2(prixNet * q - taxe);
+    let fraisV = R2(p * c / 100);
+  let baseTaxe = R2((p - fraisV) - port.pru); // Déduction des frais d'abord
+let taxeLigne = baseTaxe > 0 ? R2(baseTaxe * 0.15) : 0;
+  let taxeTotale = R2(taxeLigne * q);
+  let netEncaisse = R2((p * q) - (fraisV * q) - taxeTotale);
+  let pvNette = R2(netEncaisse - (port.pru * q));
   document.getElementById('gainNetSimu').textContent = fmt(netEncaisse)+' MAD';
   document.getElementById('detailSimu').innerHTML = `PRU: ${fmt(port.pru)} | PV: ${fmt(pvNette)} | Taxe: ${fmt(taxe)}`;
 }
@@ -611,19 +623,27 @@ function validerVente() {
   let port = DB.portefeuille[v];
   if(!v||!d||!q||!p) return alert('Remplis tout');
   if(q > port.qte) return alert('Qté > stock: '+port.qte);
-  let fraisV = R2(p * c / 100);
-let fraisA = R2(port.pru * c / 100);  // <-- MANQUANT : frais d'achat
-let prixNet = R2(p - fraisV);
-let prixAchatTotal = R2(port.pru + fraisA); // <-- MANQUANT : PRU + frais
-let pvBrute = R2((prixNet - prixAchatTotal) * q); // <-- utilise prixAchatTotal
-let taxe = pvBrute > 0 ? R2inf(pvBrute * 0.15) : 0;
-let pvNette = R2(pvBrute - taxe);
-let netEncaisse = R2((prixNet * q) - taxe); // Net après taxe 15% // <-- le net encaissé c'est juste prixNet * q
-  DB.transactions.push({id:Date.now(), type:'VENTE', date:d, valeur:v, qte:q, prix:p, cout:c, frais:fraisV, pru:port.pru, pvBrute:pvBrute, taxe:taxe, pvNette:pvNette, netEncaisse:netEncaisse});
-  save();
-  showEcran('home');
+    let fraisV = R2(p * c / 100);
+  let baseTaxe = R2((p - fraisV) - port.pru); 
+let taxeLigne = baseTaxe > 0 ? R2(baseTaxe * 0.15) : 0;
+  let taxeTotale = R2(taxeLigne * q);
+  let netEncaisse = R2((p * q) - (fraisV * q) - taxeTotale);
+  let pvNette = R2(netEncaisse - (port.pru * q));
+}
+    });
+    DB.solde = R2(Number(DB.solde) + netEncaisse);
+    save();
+    showEcran('home');
 }
 
+function resetVente() {
+    document.getElementById('qteVente').value = '';
+    document.getElementById('prixVente').value = '';
+    document.getElementById('gainNetSimu').textContent = '0.00 MAD';
+    document.getElementById('detailSimu').innerHTML = '';
+    document.getElementById('qteVente').focus();
+}
+    
 function getExportData() {
   let data = [['DATE','TYPE','VALEUR','QTE','PRIX','COUT%','FRAIS','PRU','PV_BRUTE','TAXE_15%','NET_ENCAISSE','PV_NETTE_REALISEE']];
   DB.transactions.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id).forEach(t=>{
@@ -706,10 +726,16 @@ function importExcel() {
         count++;
       } else if(t.type=='VENTE') {
         if(p.qte>=t.qte) {
-          let frais=R2(t.prix*t.cout/100), prixNet=R2(t.prix-frais);
-          let pvBrute=R2((prixNet-p.pru)*t.qte), taxe=pvBrute>0?R2inf(pvBrute*0.15):0;
-          let pvNette=R2(pvBrute-taxe), netEncaisse=R2(prixNet*t.qte-taxe);
-          DB.transactions.push({...t, frais, pru:p.pru, pvBrute, taxe, pvNette, netEncaisse});
+          let frais = R2(t.prix * t.cout / 100);
+let prixNetVente = t.prix - frais; // Prix après frais de vente
+let baseTaxe = R2(prixNetVente - p.pru); // Gain réel taxable
+let taxe = baseTaxe > 0 ? R2(baseTaxe * 0.15) : 0;
+
+let pvBrute = R2((prixNetVente - p.pru) * t.qte);
+let pvNette = R2(pvBrute - (taxe * t.qte));
+let netEncaisse = R2((prixNetVente * t.qte) - (taxe * t.qte));
+    DB.transactions.push({...t, frais, pru:p.pru, pvBrute, taxe, pvNette, netEncaisse});
+            
           p.qte -= t.qte;
           p.total = p.qte * p.pru;
           count++;
@@ -742,19 +768,22 @@ function renderHistorique() {
   let data = triHistorique();
   let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th><th>Action</th></tr>';
   data.forEach(t=>{
-    html += `<tr>
-      <td>${t.date}</td>
-      <td>${t.type}</td>
-      <td>${t.valeur}</td>
-      <td>${t.qte}</td>
-      <td>${fmt(t.prix)}</td>
-      <td>${t.cout}</td>
-      <td>${fmt(t.pru)}</td>
-      <td class="${t.type=='VENTE'?(t.pvNette>=0?'green':'red'):''}">${t.type=='VENTE'?fmt(t.pvNette):'-'}</td>
-      <td>
-        <button onclick="editHistorique(${t.id})" style="padding:4px 8px;font-size:11px;margin-right:4px">✏️</button>
-        <button onclick="deleteHistorique(${t.id})" style="padding:4px 8px;font-size:11px;background:#ff3b30;color:#fff">🗑️</button>
-      </td>
+  let pvn = t.pvb - (t.frais || 0);
+  let taxeAffiche = (t.type === 'VENTE' && pvn > 0) ? R2(pvn * 0.15) : 0;
+   html += '<tr>'
+        <td>${t.date}</td>
+        <td>${t.type}</td>
+        <td>${t.valeur}</td>
+        <td>${t.qte}</td>
+        <td>${fmt(t.prix)}</td>
+        <td>${t.cout ? fmt(t.cout) : '-'}</td>
+        <td>${fmt(t.pru)}</td>
+        <td style="color: #ff3b30">${taxeAffiche > 0 ? fmt(taxeAffiche) : '-'}</td>
+        <td class="${t.type=='VENTE'?(t.pvNette>=0?'green':'red'):''}">${t.type=='VENTE'?fmt(t.pvNette):'-'}</td>
+        <td>
+            <button onclick="editHistorique(${t.id})" style="padding:4px 8px;font-size:11px;margin-right:4px">✏️</button>
+            <button onclick="deleteHistorique(${t.id})" style="padding:4px 8px;font-size:11px;background:#ff3b30;color:#fff">🗑️</button>
+        </td>
     </tr>`;
   });
   document.getElementById('tableHistorique').innerHTML = html + '</table>';
@@ -1032,77 +1061,84 @@ setInterval(() => {
   if (ecran && ecran.classList.contains('active')) chargerCours();
 }, 30000);
     // PILOTAGE ENCAISSEMENT
-document.getElementById('fileInEncaisse').addEventListener('change', function(e) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        const wb = XLSX.read(new Uint8Array(event.target.result), {type: 'array'});
-
-        let r = { aE:0, aH:0, vG:0, vH:0, vI:0 };
-        let l = { lG:0, lH:0, lI:0 };
-
-        const getSheet = (name) => {
-            const found = wb.SheetNames.find(n => n.toUpperCase() === name.toUpperCase());
-            return found? wb.Sheets[found] : null;
-        };
-
-        const s_achat = getSheet("ACHAT");
-        const s_vente = getSheet("VENTES");
-        const s_lat = getSheet("LATTENTE");
-
-        if(s_achat) {
-            XLSX.utils.sheet_to_json(s_achat).forEach(row => {
-                r.aE += parseFloat(row['QTE * PRIX'] || 0);
-                r.aH += parseFloat(row['CT TTC'] || 0);
-            });
+function renderPilotage() {
+    let realise = { debit: 0, credit: 0, taxes: 0, fraisV: 0, achatBrut: 0 };
+    
+    // 1. Calcul du RÉALISÉ (Historique)
+    DB.transactions.forEach(t => {
+        if (t.type === 'VENTE') {
+            realise.achatBrut += (t.pru * t.qte);
+            realise.fraisV += (t.frais || 0);
+            realise.taxes += (t.taxe || 0);
+            realise.credit += (t.prix * t.qte);
         }
+    });
+    realise.debit = realise.achatBrut + realise.fraisV + realise.taxes;
 
-        if(s_vente) {
-            XLSX.utils.sheet_to_json(s_vente).forEach(row => {
-                r.vG += parseFloat(row['CT TTC'] || 0);
-                r.vH += parseFloat(row['TAXE 15%'] || 0);
-                r.vI += parseFloat(row['CR COMPTE'] || 0);
-            });
-        }
-
-        if(s_lat) {
-            XLSX.utils.sheet_to_json(s_lat).forEach(row => {
-                l.lG += parseFloat(row['CT TTC'] || 0);
-                l.lH += parseFloat(row['TAXE 15%'] || 0);
-                l.lI += parseFloat(row['CR COMPTE'] || 0);
-            });
-        }
-
-        calculerEncaissement(r, l);
-    };
-    reader.readAsArrayBuffer(e.target.files[0]);
-});
-
-function calculerEncaissement(r, l) {
+    // Affichage Réalisé
     document.getElementById('resultsEncaisse').style.display = 'grid';
+    document.getElementById('res-realise').innerText = R2(realise.credit - realise.debit) + " Dh";
+    document.getElementById('r-achat').innerText = "- " + R2(realise.achatBrut);
+    document.getElementById('r-f-ven').innerText = "- " + R2(realise.fraisV);
+    document.getElementById('r-tax').innerText = "- " + R2(realise.taxes);
+    document.getElementById('r-credit').innerText = "+ " + R2(realise.credit);
 
-    // 1. RÉALISÉ
-    const deb_r = r.aE + r.aH + r.vG + r.vH;
-    const net_r = r.vI - deb_r;
-
-    document.getElementById('res-realise').innerText = net_r.toFixed(2) + " Dh";
-    document.getElementById('res-realise').style.color = net_r >= 0? "#059669" : "#dc2626";
-    document.getElementById('r-achat').innerText = "-" + r.aE.toFixed(2);
-    document.getElementById('r-f-acq').innerText = "-" + r.aH.toFixed(2);
-    document.getElementById('r-f-ven').innerText = "-" + r.vG.toFixed(2);
-    document.getElementById('r-tax').innerText = "-" + r.vH.toFixed(2);
-    document.getElementById('r-credit').innerText = "+" + r.vI.toFixed(2);
-
-    // 2. GLOBAL
-    const deb_total = deb_r + l.lG + l.lH;
-    const cre_total = r.vI + l.lI;
-    const net_total = cre_total - deb_total;
-
-    document.getElementById('res-global').innerText = net_total.toFixed(2) + " Dh";
-    document.getElementById('res-global').style.color = net_total >= 0? "#2563eb" : "#dc2626";
-    document.getElementById('g-lat-val').innerText = "+" + l.lI.toFixed(2);
-    document.getElementById('g-f-lat').innerText = "-" + l.lG.toFixed(2);
-    document.getElementById('g-t-lat').innerText = "-" + l.lH.toFixed(2);
+    // 2. Préparation du LATENT (Portefeuille)
+    let htmlLatent = '<table style="width:100%; font-size:12px; border-collapse:collapse;">';
+    htmlLatent += '<tr style="background:#eee;"><th>Valeur</th><th>Qte</th><th>PRU</th><th>Cours J</th><th>Action</th></tr>';
+    
+    Object.keys(DB.portefeuille).forEach(v => {
+        let p = DB.portefeuille[v];
+        if(p.qte > 0) {
+            htmlLatent += `<tr style="border-bottom:1px solid #ddd; height:40px;">
+                <td><b>${v}</b></td>
+                <td>${p.qte}</td>
+                <td>${R2(p.pru)}</td>
+                <td><input type="number" step="0.01" class="cours-pilote" data-titre="${v}" 
+                    style="width:60px; padding:5px;" oninput="majGlobalPilotage()"></td>
+                <td id="res-l-${v}" style="font-weight:bold;">0.00</td>
+            </tr>`;
+        }
+    });
+    htmlLatent += '</table>';
+    // On injecte le tableau dans un conteneur (assure-toi d'avoir cet ID ou change-le)
+    let conteneur = document.getElementById('g-lat-val') || document.createElement('div');
+    conteneur.innerHTML = htmlLatent;
 }
+function majGlobalPilotage() {
+    let totalLatentDebit = 0;
+    let totalLatentCredit = 0;
+    let inputs = document.querySelectorAll('.cours-pilote');
+    inputs.forEach(inp => {
+        let titre = inp.getAttribute('data-titre');
+        let p = DB.portefeuille[titre];
+        let cours = parseFloat(inp.value) || 0;  
+        if(cours > 0) {
+            let brutVente = cours * p.qte;
+            let fraisV = R2(brutVente * 0.0011); // Simulation frais 0.11%
+            let gainNet = (brutVente - fraisV) - (p.pru * p.qte);
+            let taxe = gainNet > 0 ? R2(gainNet * 0.15) : 0;
+            let debitL = (p.pru * p.qte) + fraisV + taxe;
+            let netL = brutVente - debitL;
+            document.getElementById('res-l-' + titre).innerText = R2(netL);
+            document.getElementById('res-l-' + titre).style.color = netL >= 0 ? 'green' : 'red';
+            totalLatentCredit += brutVente;
+            totalLatentDebit += debitL;
+        }
+    });
+  // Mise à jour des compteurs globaux (Réalisé + Latent saisi)
+    let netR = parseFloat(document.getElementById('res-realise').innerText);
+    let netL_Total = totalLatentCredit - totalLatentDebit;
+    let global = netR + (totalLatentCredit - totalLatentDebit);
+    document.getElementById('res-global').innerText = R2(global) + " Dh";
+    document.getElementById('res-global').style.color = global >= 0 ? '#059669' : '#dc2626';
+}
+// Appeler la fonction quand on affiche l'écran
+let oldShowPilote = showEcran;
+showEcran = function(nom) {
+    oldShowPilote(nom);
+    if(nom == 'ecranEncaisse') renderPilotage(); // Remplace par le nom exact de ton écran
+};
 </script>
 </body>
 </html>
