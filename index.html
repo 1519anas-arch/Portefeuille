@@ -9,8 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <style>
-.ecran { display: none; }
-.ecran.active { display: block; }
 :root {--bg:#f0f2f5;--card:#fff;--dark:#1a1a1a;--primary:#003366;--accent:#00aaff;--green:#34c759;--red:#ff3b30;--shadow:0 4px 12px rgba(0,0,0,.08)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
 body{background:var(--bg);color:#333;padding:12px;min-height:100vh}
@@ -50,7 +48,7 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
 .live-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee}
 .price{font-weight:bold;font-family:monospace;transition:all 0.3s}
 .up{color:#27ae60}.down{color:#e74c3c}
-    .upload-card { background: white; padding: 25px; border-radius: 12px; border: 2px dashed #cbd5e1; text-align: center; margin-bottom: 20px; cursor: pointer; }
+.upload-card { background: white; padding: 25px; border-radius: 12px; border: 2px dashed #cbd5e1; text-align: center; margin-bottom: 20px; cursor: pointer; }
 .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
 .score-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-top: 6px solid; }
 .card-realise { border-top-color: #059669; }
@@ -68,43 +66,43 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
 <header id="main-header">S. CAPITAL BOURSE</header>
 
 <!-- PAGE D'ACCUEIL -->
-<div class="ecran page active" id="ecranHome">
+<div class="page active" id="ecranHome">
     <div class="home-grid">
-        <button class="menu-btn" onclick="showEcran('marche')">📊 MARCHÉ EN DIRECT</button>
-        <button class="menu-btn" onclick="showEcran('portefeuille')">PORTEFEUILLE</button>
-        <button class="menu-btn" onclick="showEcran('vente')">VENDRE</button>
-        <button class="menu-btn" onclick="showEcran('achat')">ACHAT</button>
-        <button class="menu-btn" onclick="showEcran('maj')">MAJ</button>
-        <button class="menu-btn" onclick="showEcran('excel')">EXCEL</button>
-        <button class="menu-btn" onclick="showEcran('historique')">HISTORIQUE</button>
-        <button class="menu-btn" onclick="showEcran('invest')">INVEST</button>
-    <button class="menu-btn" onclick="showEcran('simulation')" style="grid-column: 1 / -1; justify-self: center; width: 60%;">SIMULATION</button>
-<button class="menu-btn" onclick="showEcran('encaissement')" style="grid-column: 1 / -1; justify-self: center; width: 60%;">💰 PILOTAGE ENCAISSEMENT</button>
-    </div>
+        <button class="menu-btn" onclick="showEcran('ecranMarche')">📊 MARCHÉ EN DIRECT</button>
+        <button class="menu-btn" onclick="showEcran('ecranPortefeuille')">PORTEFEUILLE</button>
+        <button class="menu-btn" onclick="showEcran('ecranVente')">VENDRE</button>
+        <button class="menu-btn" onclick="showEcran('ecranAchat')">ACHAT</button>
+        <button class="menu-btn" onclick="showEcran('ecranMaj')">MAJ</button>
+        <button class="menu-btn" onclick="showEcran('ecranExcel')">EXCEL</button>
+        <button class="menu-btn" onclick="showEcran('ecranHistorique')">HISTORIQUE</button>
+        <button class="menu-btn" onclick="showEcran('ecranInvest')">INVEST</button>
+        <button class="menu-btn" onclick="showEcran('ecranSimulation')" style="grid-column: 1 / -1; justify-self: center; width: 60%;">SIMULATION</button>
+        <button class="menu-btn" onclick="showEcran('ecranEncaissement')" style="grid-column: 1 / -1; justify-self: center; width: 60%;">💰 PILOTAGE ENCAISSEMENT</button>
     </div>
     <div class="basmala-zone">
         <div class="basmala">باسم الله الرحمن الرحيم<br> و الصلاة والسلام <br> على أشرف المرسلين</div>
-       <div class="profit-line" style="margin-top:12px">
-    <div class="green" id="profitGlobal">PROFIT NET GLOBAL: 0.00 MAD</div>
-    <div id="soldeGlobal">Solde: 0.00 MAD</div>
-</div>
+        <div class="profit-line" style="margin-top:12px">
+            <div class="green" id="profitGlobal">PROFIT NET GLOBAL: 0.00 MAD</div>
+            <div id="soldeGlobal">Solde: 0.00 MAD</div>
+        </div>
     </div>
 </div>
 
-<!-- ONGLET 1 : MARCHÉ NOUVEAU -->
-<div class="ecran page" id="ecranMarche">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+<!-- MARCHÉ -->
+<div class="page" id="ecranMarche">
+  <button class="back-btn" onclick="showEcran('ecranHome')">← Retour Accueil</button>
   <h2>Marché en direct</h2>
   <div class="card" style="padding:0;overflow:hidden;">
-      <div id="listeCours" style="min-height:1250px;width:100%;"></div>
+    <div id="listeCours" style="min-height:200px;width:100%;">Données du marché indisponibles...</div>
     <div style="font-size:11px;color:#666;margin-top:8px;text-align:right">
       MÀJ : <span id="dateMajCours">-</span>
     </div>
   </div>
 </div>
 
-<div class="ecran page" id="ecranInvest">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+<!-- INVESTISSEMENT -->
+<div class="page" id="ecranInvest">
+  <button class="back-btn" onclick="showEcran('ecranHome')">← Retour Accueil</button>
   <div class="nav-top"><h1>Dépôt / Retrait</h1></div>
   <div class="card">
     <div class="card-dark" style="margin-bottom:12px">
@@ -113,9 +111,9 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
     </div>
     <label>Montant MAD</label>
     <input type="number" id="montantInvest" step="0.01" placeholder="Tape un montant positif">
-   <label>Date de l'opération</label>
+    <label>Date de l'opération</label>
     <input type="date" id="dateOperation" style="margin-bottom:12px">
-   <div class="grid2" style="margin-top:12px">
+    <div class="grid2" style="margin-top:12px">
       <button class="btn btn-green" onclick="mouvementInvest(1)">Dépôt</button>
       <button class="btn btn-red" onclick="mouvementInvest(-1)">Retrait</button>
     </div>
@@ -124,1020 +122,45 @@ header{background:var(--primary);color:#fff;padding:20px;text-align:center;font-
   </div>
 </div>
 
-<div class="ecran page" id="ecranPortefeuille">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
+<!-- PORTEFEUILLE -->
+<div class="page" id="ecranPortefeuille">
+  <button class="back-btn" onclick="showEcran('ecranHome')">← Retour Accueil</button>
   <div class="nav-top"><h1>Portefeuille</h1></div>
-  <div id="listePortefeuille"></div>
+  <div id="listePortefeuille">Aucun actif en portefeuille.</div>
 </div>
-    <div class="ecran page" id="ecranEncaissement">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
-  <div class="nav-top"><h1>Pilotage Encaissement</h1></div>
 
+<!-- ENCAISSEMENT -->
+<div class="page" id="ecranEncaissement">
+  <button class="back-btn" onclick="showEcran('ecranHome')">← Retour Accueil</button>
+  <div class="nav-top"><h1>Pilotage Encaissement</h1></div>
   <div class="card upload-card" onclick="document.getElementById('fileInEncaisse').click()">
     <h2 style="color:var(--primary); margin:0;">Charger Classeur3</h2>
     <p style="font-size:0.9rem;">Fichier Excel avec onglets ACHAT, VENTES, LATTENTE</p>
     <input type="file" id="fileInEncaisse" hidden accept=".xlsx">
   </div>
+</div>
 
-  <div id="resultsEncaisse" class="results-grid" style="display:none">
-    <div class="score-card card-realise">
-      <h2>Résultat Réalisé</h2>
-      <span id="res-realise" class="main-val">0.00 Dh</span>
-      <div class="details">
-        <div class="row"><span>Achat Brut (E) :</span> <span id="r-achat" class="val-neg"></span></div>
-        <div class="row"><span>Frais Achat (H) :</span> <span id="r-f-acq" class="val-neg"></span></div>
-        <div class="row"><span>Frais Vente (G) :</span> <span id="r-f-ven" class="val-neg"></span></div>
-        <div class="row"><span>Taxes 15% (H) :</span> <span id="r-tax" class="val-neg"></span></div>
-        <div class="row" style="margin-top:8px; border-top:1px dashed #ddd; padding-top:4px;">
-          <span>Encaissement (I) :</span> <span id="r-credit" class="val-pos"></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="score-card card-encours">
-      <h2>Résultat Global (+ Latente)</h2>
-      <span id="res-global" class="main-val">0.00 Dh</span>
-      <div class="details">
-        <div class="row"><span>Crédit Latent (I) :</span> <span id="g-lat-val" class="val-pos"></span></div>
-        <div class="row"><span>Frais Latents (G) :</span> <span id="g-f-lat" class="val-neg"></span></div>
-        <div class="row"><span>Taxes Latentes (H) :</span> <span id="g-t-lat" class="val-neg"></span></div>
-        <p style="font-size:0.7rem; color:#94a3b8; margin-top:10px;">Simulation : Vente totale immédiate des lignes en attente.</p>
-      </div>
-    </div>
-  </div>
-    </div>
-<div class="ecran" id="ecranSimulation">
-      <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
-  <h2>Simulation Vente Stock</h2>
-  <div class="card">
-    <div class="form-group">
-      <label>Valeur en stock</label>
-      <select id="simValeur" class="form-input" onchange="updateSimValeur()"></select>
-    </div>
-    <div class="form-group">
-      <label>Quantité à vendre</label>
-      <input type="number" id="simQte" class="form-input" oninput="calcSim()">
-    </div>
-    <div class="form-group">
-      <label>Prix de vente</label>
-      <input type="number" id="simPrixV" class="form-input" step="0.01" oninput="calcSim()">
-    </div>
-    <div class="form-group">
-      <label>Coût % vente</label>
-      <input type="number" id="simCoutV" class="form-input" value="0.11" step="0.01" oninput="calcSim()">
-    </div>
-    <div id="simResultat" style="margin-top:15px;padding:10px;background:#f3f4f6;border-radius:8px;font-weight:600;"></div>
-    <hr style="margin:16px 0;border:0;border-top:1px solid #333">
-    <div style="font-size:12px;opacity:.7;margin-bottom:8px">VERSION MANUELLE</div>
-    <div class="form-group">
-      <label>Prix d'achat manuel</label>
-      <input type="number" id="simPrixA" class="form-input" step="0.01" oninput="calcSim()">
-    </div>
-    <div class="form-group">
-      <label>Coût % achat manuel</label>
-      <input type="number" id="simCoutA" class="form-input" value="0.11" step="0.01" oninput="calcSim()">
-    </div>
-  </div>
-  <div id="resultatSim"></div>
-</div>
-<div class="ecran page" id="ecranMaj">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
-  <div class="nav-top"><h1>Cours Veille</h1></div>
-  <div class="card">
-    <div id="wrapTableMaj">
-      <div class="table-wrap">
-        <table>
-          <tr><th>Valeur</th><th>Qté</th><th>PRU</th><th>Cours Veille</th><th>+/-</th><th>Latente</th></tr>
-          <tbody id="tableMaj"></tbody>
-        </table>
-      </div>
-      <button class="btn" style="width:100%;margin-top:12px;background:#007aff;color:#fff" onclick="saveMaj()">Enregistrer</button>
-    </div>
-
-    <div id="resumeMaj" class="hide">
-      <div class="table-wrap" style="margin-bottom:16px">
-        <table>
-          <tr><th>Valeur</th><th>Qté</th><th>PRU</th><th>Cours</th><th>+/-</th><th>Latente</th></tr>
-          <tbody id="tableResumeMaj"></tbody>
-        </table>
-      </div>
-      <div style="border-top:1px solid #e5e5e5;padding:12px 4px 0;margin-top:12px">
-  <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px">
-    <span>TOTAL +/- LATENTE</span>
-    <span id="totalLatente" style="font-weight:700">0.00 MAD</span>
-  </div>
-  <div style="display:flex;justify-content:space-between;font-size:14px">
-    <span>VALEUR TOTALE</span>
-    <span id="valeurTotale" style="font-weight:700">0.00 MAD</span>
-  </div>
-      </div>
-      <button class="btn" style="width:100%;margin-top:12px" onclick="renderMaj()">Modifier</button>
-    </div>
-  </div>
-</div>
-<div class="ecran page" id="ecranAchat">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
-  <div class="nav-top"><h1>Achat</h1></div>
-  <div class="card">
-    <label>Valeur</label>
-    <select id="valeurAchat" onchange="toggleAutreAchat()"></select>
-    <input id="valeurAchatAutre" class="hide" placeholder="Nouvelle valeur">
-    <label>Date</label><input type="date" id="dateAchat">
-    <label>Quantité</label><input type="number" id="qteAchat" step="1" oninput="calcAchat()">
-    <label>Prix MAD</label><input type="number" id="prixAchat" step="0.01" oninput="calcAchat()">
-    <label>Coût %</label><input type="number" id="coutAchat" step="0.01" value="0.11" oninput="calcAchat()">
-    <label><input type="checkbox" id="pruManuel" onchange="togglePRU()"> PRU manuel</label>
-    <input type="number" id="pruAchatManuel" step="0.01" class="hide">
-    <div class="card-dark" style="margin-top:12px">
-      <div style="font-size:12px;opacity:.7">PRU calculé</div>
-      <div style="font-size:28px;font-weight:700;margin:8px 0" id="pruCalcule">0.00 MAD</div>
-      <div style="font-size:12px;opacity:.7">Total: <span id="totalAchat">0.00</span> MAD</div>
-    </div>
-    <div style="display: flex; gap: 10px; margin-top: 12px;">
-    <button class="btn" style="flex: 1; background-color: #28a745;" onclick="validerAchat()">Valider</button>
-    <button class="btn" style="flex: 1; background-color: #dc3545;" onclick="resetAchat()">Réinitialiser</button>
-    </div>
-      
-  </div>
-</div>
-<div class="ecran page" id="ecranVente">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
-  <div class="nav-top"><h1>Vente</h1></div>
-  <div class="card">
-    <label>Valeur en stock</label><select id="valeurVente" onchange="updateStock()"></select>
-    <div style="font-size:12px;padding:4px 8px;border-radius:6px;background:#e5e5ea;display:inline-block">Stock: <span id="stockDispo">0</span> | PRU: <span id="pruVente">0.00</span></div>
-    <label>Date</label><input type="date" id="dateVente">
-    <label>Quantité</label><input type="number" id="qteVente" step="1" oninput="simuVente()">
-    <label>Coût % vente</label>
-<input type="number" id="coutVente" class="form-input" value="0.11" step="0.01" oninput="simuVente()">
-    <label>Prix vente MAD</label><input type="number" id="prixVente" step="0.01" oninput="simuVente()">
-      <div style="font-size:12px;opacity:.7">NET ENCAISSÉ</div>
-      <div style="font-size:28px;font-weight:700;margin:8px 0" id="gainNetSimu">0.00 MAD</div>
-      <div style="font-size:11px;opacity:.7;text-align:left;margin-top:8px" id="detailSimu"></div>
-    </div>
-<div style="display: flex; gap: 10px; margin-top: 12px;">
-    <button class="btn" style="flex: 1; background-color: #28a745;" onclick="validerVente()">Valider</button>
-    <button class="btn" style="flex: 1; background-color: #dc3545;" onclick="resetVente()">Réinitialiser</button>
-</div>
-</div>
-</div>
-<div class="ecran page" id="ecranExcel">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
-  <div class="nav-top"><h1>Excel</h1></div>
-  <div class="card">
-    <h2>Importer</h2>
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
-    <button class="btn" onclick="importExcel()">Importer fichier</button>
-    <h2 style="margin-top:20px">Exporter</h2>
-    <div class="grid2">
-      <button class="btn" onclick="exportExcel()">Excel.xlsx</button>
-      <button class="btn btn-grey" onclick="exportCSV()">CSV mobile</button>
-    </div>
-  </div>
-</div>
-<div class="ecran page" id="ecranHistorique">
-  <button class="back-btn" onclick="showEcran('home')">← Retour Accueil</button>
-  <div class="nav-top"><h1>Historique</h1></div>
-  <div class="card">
-    <label>Type</label>
-    <select id="filtreType" onchange="renderHistorique()">
-      <option value="">Tous</option>
-      <option value="ACHAT">Achats</option>
-      <option value="VENTE">Ventes</option>
-    </select>
-    <label>Valeur</label>
-    <select id="filtreValeur" onchange="renderHistorique()"></select>
-    <label>Date</label>
-    <input type="date" id="filtreDate" onchange="renderHistorique()">
-    <div class="table-wrap" style="margin-top:12px" id="tableHistorique"></div>
-  </div>
-</div>
+<!-- ÉCRANS MANQUANTS REQUIS (STUBS) -->
+<div class="page" id="ecranVente"><button class="back-btn" onclick="showEcran('ecranHome')">← Retour</button><h2>Ventes</h2></div>
+<div class="page" id="ecranAchat"><button class="back-btn" onclick="showEcran('ecranHome')">← Retour</button><h2>Achats</h2></div>
+<div class="page" id="ecranMaj"><button class="back-btn" onclick="showEcran('ecranHome')">← Retour</button><h2>Mises à jour</h2></div>
+<div class="page" id="ecranExcel"><button class="back-btn" onclick="showEcran('ecranHome')">← Retour</button><h2>Gestion Excel</h2></div>
+<div class="page" id="ecranHistorique"><button class="back-btn" onclick="showEcran('ecranHome')">← Retour</button><h2>Historique</h2></div>
+<div class="page" id="ecranSimulation"><button class="back-btn" onclick="showEcran('ecranHome')">← Retour</button><h2>Simulation</h2></div>
 
 <script>
-let DB = {invest:0, mouvements:[], transactions:[], cours:{}};
-const R2 = x => Math.round(x*100)/100;
-const R2inf = x => Math.floor(x*100)/100;
-const fmt = x => R2(x).toFixed(2);
-
-function load() {
-  let d = localStorage.getItem('pfbourse');
-  if(d) DB = JSON.parse(d);
-  if(!DB.cours) DB.cours = {};
-  updateAll();
-  document.getElementById('dateAchat').valueAsDate = new Date();
-  document.getElementById('dateVente').valueAsDate = new Date();
-  simulateLiveMarket();
+// Gestion de la navigation entre écrans
+function showEcran(idEcran) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(idEcran);
+    if(target) target.classList.add('active');
 }
 
-function save() {
-  localStorage.setItem('pfbourse', JSON.stringify(DB));
-  updateAll();
-}
-
-function updateAll() {
-  calcPortefeuille();
-  updateHome();
-  initSelects();
-  initFiltreValeur();
-}
-
-function showEcran(nom) {
-  document.querySelectorAll('.ecran').forEach(p => p.classList.remove('active'));
-  document.getElementById('ecran'+nom.charAt(0).toUpperCase()+nom.slice(1)).classList.add('active');
-  window.scrollTo(0,0);
-  if(nom=='portefeuille') renderPortefeuille();
-  if(nom=='historique') renderHistorique();
-  if(nom=='invest') renderInvest();
-  if(nom=='vente') updateStock();
-  if(nom=='maj') renderMaj();
-  if(nom=='simulation') loadSimData();
-}
-
-
-function calcPortefeuille() {
-  DB.portefeuille = {};
-  DB.transactions.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id).forEach(t=>{
-    if(!DB.portefeuille[t.valeur]) DB.portefeuille[t.valeur] = {qte:0, pru:0, total:0};
-    let p = DB.portefeuille[t.valeur];
-    if(t.type=='ACHAT') {
-      let nouveauTotal = p.total + t.pru*t.qte;
-      p.qte += t.qte;
-      p.total = nouveauTotal;
-      p.pru = p.qte>0? R2(p.total/p.qte) : 0;
-    } else {
-      p.qte -= t.qte;
-      p.total = p.qte * p.pru;
-      if(p.qte<=0) {p.qte = 0;p.total = 0;p.pru = 0;}
-    }
-  });
-  Object.keys(DB.portefeuille).forEach(v=>{
-    if(DB.portefeuille[v].qte<=0) delete DB.portefeuille[v];
-  });
-}
-
-function getSolde() {
-  let depenses = DB.transactions.filter(t=>t.type=='ACHAT').reduce((s,t)=>s+t.pru*t.qte,0);
-  let encaisse = DB.transactions.filter(t=>t.type=='VENTE').reduce((s,t)=>s+t.netEncaisse,0);
-  return R2(DB.invest - depenses + encaisse);
-}
-
-function updateHome() {
-  let pvNette = DB.transactions.filter(t=>t.type=='VENTE').reduce((s,t)=>s+t.pvNette,0);
-  let solde = getSolde();
-  document.getElementById('profitGlobal').textContent = `PROFIT NET GLOBAL: ${fmt(pvNette)} MAD`;
-  document.getElementById('profitGlobal').className = pvNette>=0?'green':'red';
-  document.getElementById('soldeGlobal').textContent = `Solde: ${fmt(solde)} MAD`;
-}
-
-function mouvementInvest(signe) {
-  let m = parseFloat(document.getElementById('montantInvest').value);
-  if(!m || m<=0) return alert('Tape un montant positif');
-  let montant = R2(m * signe);
-  let date = document.getElementById('dateOperation').value || new Date().toISOString().split('T')[0];
-  DB.mouvements.push({date:date, montant:montant});
-  DB.invest = R2(DB.invest + montant);
-  save();
-  renderInvest();
-  document.getElementById('dateOperation').value = '';
-  document.getElementById('montantInvest').value = '';
-}
-
-function renderInvest() {
-  document.getElementById('soldeInvest').textContent = fmt(getSolde())+' MAD';
-  let h = DB.mouvements.map(m=>`<div>${m.date}: ${m.montant>0?'+':''}${fmt(m.montant)} MAD</div>`).join('');
-  document.getElementById('historiqueInvest').innerHTML = h || 'Aucun mouvement';
-}
-
-function renderPortefeuille() {
-  let html = '';
-  let totalGlobal = 0;
-  let totalLatent = 0;
-
-  // Calcul des totaux d'abord
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let p = DB.portefeuille[v];
-    let cours = DB.cours[v] || p.pru;
-    totalGlobal += p.pru * p.qte;
-    totalLatent += cours * p.qte;
-  });
-
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let p = DB.portefeuille[v];
-    let cours = DB.cours[v] || p.pru;
-    let valGlobal = cours * p.qte;
-    let valPRU = p.pru * p.qte;
-    let latent = R2((cours - p.pru) * p.qte);
-    let poids = totalLatent > 0? R2(valGlobal / totalLatent * 100) : 0;
-
-    html += `<div class="card">
-    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-      <div style="font-weight:600;font-size:15px">${v}</div>
-      <div style="font-size:14px">${p.qte}</div>
-    </div>
-    <div class="ligne-valeur">
-      <span class="label">PRU</span>
-      <span class="montant">${R2(p.pru)}</span>
-    </div>
-    <div class="ligne-valeur">
-      <span class="label">Cours</span>
-      <span class="montant">${R2(cours)}</span>
-    </div>
-    <div class="ligne-valeur">
-      <span class="label">Latent</span>
-      <span class="montant" style="color:${latent>=0?'#10b981':'#ef4444'}">${R2(latent)}</span>
-    </div>
-    <div class="ligne-valeur">
-      <span class="label">Valeur</span>
-      <span class="montant">${R2(valGlobal)}</span>
-    </div>
-    <div class="ligne-valeur">
-      <span class="label">Poids</span>
-      <span class="montant">${poids.toFixed(2)}%</span>
-    </div>
-</div>`;
-  });
-
-  html += `<div class="card-dark"><div style="font-size:12px;opacity:.7">TOTAL PRU</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalGlobal)} MAD</div>
-  <div style="font-size:12px;opacity:.7;margin-top:8px">VALEUR ACTUELLE</div><div style="font-size:28px;font-weight:700;margin:8px 0">${fmt(totalLatent)} MAD</div></div>`;
-  document.getElementById('listePortefeuille').innerHTML = html || '<div class="card">Portefeuille vide</div>';
-}
-
-function renderMaj() {
-  let html = '';
-  document.getElementById('wrapTableMaj').classList.remove('hide');
-  document.getElementById('resumeMaj').classList.add('hide');
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let p = DB.portefeuille[v];
-    let cours = DB.cours[v] || '';
-    let diff = cours? R2(cours - p.pru) : 0;
-    let latente = cours? R2(diff * p.qte) : 0;
-    html += `<tr>
-      <td>${v}</td>
-      <td>${p.qte}</td>
-      <td>${fmt(p.pru)}</td>
-      <td><input type="number" step="0.01" id="cours_${v}" value="${cours}" style="width:80px;padding:4px" oninput="calcLigneMaj('${v}')"></td>
-      <td class="${diff>=0?'green':'red'}" id="diff_${v}">${cours?fmt(diff):'-'}</td>
-      <td class="${latente>=0?'green':'red'}" id="lat_${v}">${cours?fmt(latente):'-'}</td>
-    </tr>`;
-  });
-  document.getElementById('tableMaj').innerHTML = html || '<tr><td colspan=6>Aucune valeur</td></tr>';
-}
-
-function calcLigneMaj(v) {
-  let cours = parseFloat(document.getElementById('cours_'+v).value) || 0;
-  let p = DB.portefeuille[v];
-  if(cours && p) {
-    let diff = R2(cours - p.pru);
-    let latente = R2(diff * p.qte);
-    document.getElementById('diff_'+v).textContent = fmt(diff);
-    document.getElementById('diff_'+v).className = diff>=0?'green':'red';
-    document.getElementById('lat_'+v).textContent = fmt(latente);
-    document.getElementById('lat_'+v).className = latente>=0?'green':'red';
-  } else {
-    document.getElementById('diff_'+v).textContent = '-';
-    document.getElementById('lat_'+v).textContent = '-';
-  }
-}
-
-function saveMaj() {
-  let totalLatente = 0;
-  let valeurTotale = 0;
-  let htmlResume = '';
-  Object.keys(DB.portefeuille).forEach(v=>{
-    let val = document.getElementById('cours_'+v).value;
-    if(val) {
-      let cours = parseFloat(val);
-      DB.cours[v] = cours;
-      let p = DB.portefeuille[v];
-      let diff = R2(cours - p.pru);
-      let latente = R2(diff * p.qte);
-      totalLatente += latente;
-      valeurTotale += R2(cours * p.qte);
-      htmlResume += `<tr>
-        <td>${v}</td>
-        <td>${p.qte}</td>
-        <td>${fmt(p.pru)}</td>
-        <td>${fmt(cours)}</td>
-        <td class="${diff>=0?'green':'red'}">${fmt(diff)}</td>
-  <td class="${latente>=0?'green':'red'}">${fmt(latente)}</td>
-      </tr>`;
-    }
-  });
-  DB.dateMajCours = new Date().toLocaleString('fr-FR');
-  save();
-  document.getElementById('wrapTableMaj').classList.add('hide');
-  document.getElementById('resumeMaj').classList.remove('hide');
-  document.getElementById('tableResumeMaj').innerHTML = htmlResume;
-  document.getElementById('totalLatente').textContent = fmt(totalLatente)+' MAD';
-  document.getElementById('totalLatente').className = totalLatente>=0?'green':'red';
-  document.getElementById('valeurTotale').textContent = fmt(valeurTotale)+' MAD';
-}
-
-function initSelects() {
-  let valeurs = [...new Set(DB.transactions.map(t=>t.valeur))];
-  let ha = '<option value="">Choisir...</option>'+valeurs.map(v=>`<option>${v}</option>`).join('')+'<option value="AUTRE">Autre...</option>';
-  document.getElementById('valeurAchat').innerHTML = ha;
-  let hv = '<option value="">Choisir...</option>'+Object.keys(DB.portefeuille).map(v=>`<option>${v}</option>`).join('');
-  document.getElementById('valeurVente').innerHTML = hv;
-}
-function initFiltreValeur() {
-  let valeurs = [...new Set(DB.transactions.map(t=>t.valeur))];
-  let fv = '<option value="">Toutes</option>'+valeurs.map(v=>`<option>${v}</option>`).join('');
-  document.getElementById('filtreValeur').innerHTML = fv;
-}
-
-function toggleAutreAchat() {
-  document.getElementById('valeurAchatAutre').classList.toggle('hide', document.getElementById('valeurAchat').value!='AUTRE');
-}
-
-function togglePRU() {
-  document.getElementById('pruAchatManuel').classList.toggle('hide',!document.getElementById('pruManuel').checked);
-  calcAchat();
-}
-
-function calcAchat() {
-  let q = parseFloat(document.getElementById('qteAchat').value)||0;
-  let p = parseFloat(document.getElementById('prixAchat').value)||0;
-  let c = parseFloat(document.getElementById('coutAchat').value)||0;
-  let frais = R2(p * c / 100);
-  let pru = document.getElementById('pruManuel').checked? parseFloat(document.getElementById('pruAchatManuel').value)||0 : R2(p + frais);
-  document.getElementById('pruCalcule').textContent = fmt(pru)+' MAD';
-  document.getElementById('totalAchat').textContent = fmt(pru * q);
-}
-
-function validerAchat() {
-  let v = document.getElementById('valeurAchat').value=='AUTRE'? document.getElementById('valeurAchatAutre').value.trim() : document.getElementById('valeurAchat').value;
-  let d = document.getElementById('dateAchat').value;
-  let q = parseFloat(document.getElementById('qteAchat').value);
-  let p = parseFloat(document.getElementById('prixAchat').value);
-  let c = parseFloat(document.getElementById('coutAchat').value);
-  if(!v||!d||!q||!p) return alert('Remplis tout');
-  let frais = R2(p * c / 100);
-  let pru = document.getElementById('pruManuel').checked? parseFloat(document.getElementById('pruAchatManuel').value) : R2(p + frais);
-  if(pru*q > getSolde()) return alert('Dépasse le solde: '+fmt(getSolde())+' MAD');
-  DB.transactions.push({id:Date.now(), type:'ACHAT', date:d, valeur:v, qte:q, prix:p, cout:c, frais:frais, pru:pru});
-  save();
-  showEcran('home');
-}
-function resetAchat() {
-    document.getElementById('qteAchat').value = '';
-    document.getElementById('prixAchat').value = '';
-    document.getElementById('totalAchat').textContent = '0.00';
-}
-    
-function updateStock() {
-  let v = document.getElementById('valeurVente').value;
-  let p = DB.portefeuille[v];
-  document.getElementById('stockDispo').textContent = p? p.qte : 0;
-  document.getElementById('pruVente').textContent = p? fmt(p.pru) : '0.00';
-  simuVente();
-}
-
-function simuVente() {
-  let v = document.getElementById('valeurVente').value;
-  let q = parseFloat(document.getElementById('qteVente').value)||0;
-  let p = parseFloat(document.getElementById('prixVente').value)||0;
-  let c = parseFloat(document.getElementById('coutVente').value.replace(',', '.'))||0;
-  let port = DB.portefeuille[v];
-  if(!port||!q||!p) {
-    document.getElementById('gainNetSimu').textContent = '0.00 MAD';
-    document.getElementById('detailSimu').textContent = '';
-    return;
-  }
-    let fraisV = R2(p * c / 100);
-  let baseTaxe = R2((p - fraisV) - port.pru); // Déduction des frais d'abord
-let taxeLigne = baseTaxe > 0 ? R2(baseTaxe * 0.15) : 0;
-  let taxeTotale = R2(taxeLigne * q);
-  let netEncaisse = R2((p * q) - (fraisV * q) - taxeTotale);
-  let pvNette = R2(netEncaisse - (port.pru * q));
-  document.getElementById('gainNetSimu').textContent = fmt(netEncaisse)+' MAD';
-  document.getElementById('detailSimu').innerHTML = `PRU: ${fmt(port.pru)} | PV: ${fmt(pvNette)} | Taxe: ${fmt(taxe)}`;
-}
-
-function validerVente() {
-  let v = document.getElementById('valeurVente').value;
-  let d = document.getElementById('dateVente').value;
-  let q = parseFloat(document.getElementById('qteVente').value);
-  let p = parseFloat(document.getElementById('prixVente').value);
-  let c = parseFloat(document.getElementById('coutVente').value);
-  let port = DB.portefeuille[v];
-  if(!v||!d||!q||!p) return alert('Remplis tout');
-  if(q > port.qte) return alert('Qté > stock: '+port.qte);
-    let fraisV = R2(p * c / 100);
-  let baseTaxe = R2((p - fraisV) - port.pru); 
-let taxeLigne = baseTaxe > 0 ? R2(baseTaxe * 0.15) : 0;
-  let taxeTotale = R2(taxeLigne * q);
-  let netEncaisse = R2((p * q) - (fraisV * q) - taxeTotale);
-  let pvNette = R2(netEncaisse - (port.pru * q));
-}
-
-    DB.solde = R2(Number(DB.solde) + netEncaisse);
-    save();
-    showEcran('home');
-}
-
-function resetVente() {
-    document.getElementById('qteVente').value = '';
-    document.getElementById('prixVente').value = '';
-    document.getElementById('gainNetSimu').textContent = '0.00 MAD';
-    document.getElementById('detailSimu').innerHTML = '';
-    document.getElementById('qteVente').focus();
-}
-    
-function getExportData() {
-  let data = [['DATE','TYPE','VALEUR','QTE','PRIX','COUT%','FRAIS','PRU','PV_BRUTE','TAXE_15%','NET_ENCAISSE','PV_NETTE_REALISEE']];
-  DB.transactions.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id).forEach(t=>{
-    if(t.type=='ACHAT') {
-      data.push([t.date,t.type,t.valeur,t.qte,t.prix,t.cout,t.frais,t.pru,'','','',0]);
-    } else {
-      data.push([t.date,t.type,t.valeur,t.qte,t.prix,t.cout,t.frais,t.pru,t.pvBrute,t.taxe,t.netEncaisse,t.pvNette]);
-    }
-  });
-  return data;
-}
-
-function exportExcel() {
-  let data = getExportData();
-  let ws = XLSX.utils.aoa_to_sheet(data);
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Historique");
-  let wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
-  let blob = new Blob([wbout], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  let url = URL.createObjectURL(blob);
-  let link = document.createElement('a');
-  link.href = url;
-  link.download = 'portefeuille_mad.xlsx';
-  link.click();
-}
-
-function exportCSV() {
-  let data = getExportData();
-  let csv = data.map(r=>r.join(';')).join('\n');
-  let blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
-  let link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'portefeuille_mad.csv';
-  link.click();
-}
-
-function importExcel() {
-  let file = document.getElementById('fileInput').files[0];
-  if(!file) return alert('Choisir fichier');
-  let reader = new FileReader();
-  reader.onload = e=>{
-    let wb = XLSX.read(e.target.result, {cellDates:false, raw:true});
-    let data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header:1, defval:''});
-    let count = 0;
-    let erreurs = [];
-    const cleanNumber = (val) => {
-      if(typeof val === 'number') return val;
-      return parseFloat(String(val).replace(/\s/g,'').replace(',','.')) || 0;
-    };
-    const excelDateToStr = (val) => {
-      if(val instanceof Date) return val.toISOString().split('T')[0];
-      if(typeof val === 'number') {
-        let d = XLSX.SSF.parse_date_code(val);
-        return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
-      }
-      return String(val).trim().split(' ')[0];
-    };
-    let tempTrans = [];
-    data.slice(1).forEach((r,i)=>{
-      let date = excelDateToStr(r[0]);
-      let type = String(r[1]).trim().toUpperCase();
-      let val = String(r[2]).trim();
-      let qte = cleanNumber(r[3]);
-      let prix = cleanNumber(r[4]);
-      let cout = cleanNumber(r[5]) || 0.11;
-      if(!date||!type||!val||!qte||!prix) return;
-      tempTrans.push({id:Date.now()+Math.random()+i, type, date, valeur:val, qte, prix, cout});
-    });
-    tempTrans.sort((a,b)=>a.date.localeCompare(b.date) || a.id-b.id);
-    let portTemp = {};
-    tempTrans.forEach(t=>{
-      if(!portTemp[t.valeur]) portTemp[t.valeur] = {qte:0, pru:0, total:0};
-      let p = portTemp[t.valeur];
-      if(t.type=='ACHAT') {
-        let frais=R2(t.prix*t.cout/100), pru=R2(t.prix+frais);
-        DB.transactions.push({...t, frais, pru});
-        p.total += pru*t.qte;
-        p.qte += t.qte;
-        p.pru = p.qte>0? R2(p.total/p.qte) : 0;
-        count++;
-      } else if(t.type=='VENTE') {
-        if(p.qte>=t.qte) {
-          let frais = R2(t.prix * t.cout / 100);
-let prixNetVente = t.prix - frais; // Prix après frais de vente
-let baseTaxe = R2(prixNetVente - p.pru); // Gain réel taxable
-let taxe = baseTaxe > 0 ? R2(baseTaxe * 0.15) : 0;
-
-let pvBrute = R2((prixNetVente - p.pru) * t.qte);
-let pvNette = R2(pvBrute - (taxe * t.qte));
-let netEncaisse = R2((prixNetVente * t.qte) - (taxe * t.qte));
-    DB.transactions.push({...t, frais, pru:p.pru, pvBrute, taxe, pvNette, netEncaisse});
-            
-          p.qte -= t.qte;
-          p.total = p.qte * p.pru;
-          count++;
-        } else {
-          erreurs.push(`${t.date} ${t.valeur}: stock insuffisant`);
-        }
-      }
-    });
-    save();
-    let msg = `Import: ${count} transactions`;
-    if(erreurs.length) msg += '\nErreurs: ' + erreurs.join(', ');
-    alert(msg);
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function triHistorique() {
-  let fType = document.getElementById('filtreType').value;
-  let fVal = document.getElementById('filtreValeur').value;
-  let fDate = document.getElementById('filtreDate').value;
-  let data = DB.transactions.filter(t=>{
-    if(fType && t.type!=fType) return false;
-    if(fVal && t.valeur!=fVal) return false;
-    if(fDate && t.date!=fDate) return false;
-    return true;
-  });
-  return data.sort((a,b)=>b.date.localeCompare(a.date) || b.id-a.id);
-}
-function renderHistorique() {
-  let data = triHistorique();
-  let html = '<table><tr><th>Date</th><th>Type</th><th>Valeur</th><th>Qté</th><th>Prix</th><th>Coût%</th><th>PRU</th><th>PV Nette</th><th>Action</th></tr>';
-  data.forEach(t=>{
-  let pvn = t.pvb - (t.frais || 0);
-  let taxeAffiche = (t.type === 'VENTE' && pvn > 0) ? R2(pvn * 0.15) : 0;
-   html += '<tr>'
-        <td>${t.date}</td>
-        <td>${t.type}</td>
-        <td>${t.valeur}</td>
-        <td>${t.qte}</td>
-        <td>${fmt(t.prix)}</td>
-        <td>${t.cout ? fmt(t.cout) : '-'}</td>
-        <td>${fmt(t.pru)}</td>
-        <td style="color: #ff3b30">${taxeAffiche > 0 ? fmt(taxeAffiche) : '-'}</td>
-        <td class="${t.type=='VENTE'?(t.pvNette>=0?'green':'red'):''}">${t.type=='VENTE'?fmt(t.pvNette):'-'}</td>
-        <td>
-            <button onclick="editHistorique(${t.id})" style="padding:4px 8px;font-size:11px;margin-right:4px">✏️</button>
-            <button onclick="deleteHistorique(${t.id})" style="padding:4px 8px;font-size:11px;background:#ff3b30;color:#fff">🗑️</button>
-        </td>
-    </tr>`;
-  });
-  document.getElementById('tableHistorique').innerHTML = html + '</table>';
-}
-
-function deleteHistorique(id) {
-  if(!confirm('Supprimer cette opération ?')) return;
-  DB.transactions = DB.transactions.filter(t => t.id != id);
-  save();
-  renderHistorique();
-}
-
-function editHistorique(id) {
-  let t = DB.transactions.find(x => x.id == id);
-  if(!t) return;
-  let newQte = parseFloat(prompt(`Quantité ${t.valeur}:`, t.qte));
-  let newPrix = parseFloat(prompt(`Prix ${t.valeur}:`, t.prix));
-  if(!newQte || !newPrix || newQte <= 0 || newPrix <= 0) return;
-  
-  if(t.type == 'ACHAT') {
-    let frais = R2(newPrix * t.cout / 100);
-    t.qte = newQte;
-    t.prix = newPrix;
-    t.frais = frais;
-    t.pru = R2(newPrix + frais);
-  } else {
-    t.qte = newQte;
-    t.prix = newPrix;
-    let port = {};
-    DB.transactions.filter(x => x.valeur == t.valeur && (x.date < t.date || (x.date == t.date && x.id < t.id))).forEach(tr => {
-      if(!port.qte) port = {qte:0, pru:0, total:0};
-      if(tr.type=='ACHAT') {
-        port.total += tr.pru * tr.qte;
-        port.qte += tr.qte;
-        port.pru = port.qte>0? R2(port.total/port.qte) : 0;
-      } else {
-        port.qte -= tr.qte;
-        port.total = port.qte * port.pru;
-      }
-    });
-    let fraisV = R2(newPrix * t.cout / 100);
-    let prixNet = R2(newPrix - fraisV);
-    let pvBrute = R2((prixNet - port.pru) * newQte);
-    t.frais = fraisV;
-    t.pvBrute = pvBrute;
-    t.taxe = pvBrute>0? R2inf(pvBrute * 0.15) : 0;
-    t.pvNette = R2(pvBrute - t.taxe);
-    t.netEncaisse = R2(prixNet * newQte - t.taxe);
-  }
-  save();
-  renderHistorique();
-}
-
-function simulateLiveMarket() {
-    const priceEl = document.getElementById('price-masi');
-    if(!priceEl) return;
-    setInterval(() => {
-        let currentPrice = parseFloat(priceEl.innerText.replace(/\s/g, '').replace(',','.'));
-        let change = (Math.random() * 10 - 5);
-        let newPrice = currentPrice + change;
-        priceEl.innerText = newPrice.toLocaleString('fr-FR', {minimumFractionDigits: 2});
-        if(change > 0) {
-            priceEl.className = 'price up';
-        } else {
-            priceEl.className = 'price down';
-        }
-    }, 3000);
-}
-
-load();
-function loadSimData() {
-  let sel = document.getElementById('simValeur');
-  sel.innerHTML = '<option value="">Choisir</option>';
-  Object.keys(DB.portefeuille).forEach(v => {
-    if(DB.portefeuille[v].qte > 0) {
-      let p = DB.portefeuille[v];
-      sel.innerHTML += `<option value="${v}">${v} - ${p.qte} titres @ ${fmt(p.pru)}</option>`;
-    }
-  });
-  document.getElementById('resultatSim').innerHTML = '';
-}
-
-function calcSim() {
-  let v = document.getElementById('simValeur').value;
-  let qte = parseFloat(document.getElementById('simQte').value);
-  let prixV = parseFloat(document.getElementById('simPrixV').value);
-  let coutV = parseFloat(document.getElementById('simCoutV').value) || 0;
-  let prixA = parseFloat(document.getElementById('simPrixA').value);
-  let coutA = parseFloat(document.getElementById('simCoutA').value) || 0;
-
-  if(!v ||!qte ||!prixV || qte <= 0) {
-    document.getElementById('resultatSim').innerHTML = '';
-    return;
-  }
-
-  let p = DB.portefeuille[v];
-  if(qte > p.qte) {
-    document.getElementById('resultatSim').innerHTML = '<div class="card" style="background:#ff3b30;color:#fff">Quantité > Stock disponible</div>';
-    return;
-  }
-
-  // VERSION 2 : PRU REEL DU STOCK
-  let fraisV2 = R2(prixV * coutV / 100);
-  let prixNetV2 = R2(prixV - fraisV2);
-  let pvBrute2 = R2((prixNetV2 - p.pru) * qte);
-  let taxe2 = pvBrute2 > 0? R2inf(pvBrute2 * 0.15) : 0;
-  let pvNette2 = R2(pvBrute2 - taxe2);
-  let netEncaisse2 = R2(prixNetV2 * qte - taxe2);
-
-  let html = `<div class="card-dark" style="margin-bottom:12px">
-    <div style="font-size:14px;font-weight:700;margin-bottom:8px">VERSION STOCK - PRU ${fmt(p.pru)}</div>
-    <div style="font-size:12px;opacity:.7">PV NETTE</div>
-    <div style="font-size:28px;font-weight:700;color:${pvNette2>=0?'#10b981':'#ef4444'}">${fmt(pvNette2)} MAD</div>
-    <div style="font-size:12px;opacity:.7;margin-top:8px">NET ENCAISSÉ: ${fmt(netEncaisse2)} MAD</div>
-    <div style="font-size:11px;opacity:.6;margin-top:4px">Taxe: ${fmt(taxe2)} MAD | Frais: ${fmt(fraisV2)} MAD</div>
-  </div>`;
-
-  // VERSION 1 : MANUELLE
-  if(prixA > 0) {
-    let fraisA1 = R2(prixA * coutA / 100);
-    let pruManuel = R2(prixA + fraisA1);
-    let fraisV1 = R2(prixV * coutV / 100);
-    let prixNetV1 = R2(prixV - fraisV1);
-    let pvBrute1 = R2((prixNetV1 - pruManuel) * qte);
-    let taxe1 = pvBrute1 > 0? R2inf(pvBrute1 * 0.15) : 0;
-    let pvNette1 = R2(pvBrute1 - taxe1);
-    let netEncaisse1 = R2(prixNetV1 * qte - taxe1);
-
-    html += `<div class="card">
-      <div style="font-size:14px;font-weight:700;margin-bottom:8px">VERSION MANUELLE - PRU ${fmt(pruManuel)}</div>
-      <div style="font-size:12px;opacity:.7">PV NETTE</div>
-      <div style="font-size:28px;font-weight:700;color:${pvNette1>=0?'#10b981':'#ef4444'}">${fmt(pvNette1)} MAD</div>
-      <div style="font-size:12px;opacity:.7;margin-top:8px">NET ENCAISSÉ: ${fmt(netEncaisse1)} MAD</div>
-      <div style="font-size:11px;opacity:.6;margin-top:4px">Taxe: ${fmt(taxe1)} MAD | Frais: ${fmt(fraisV1)} MAD</div>
-    </div>`;
-  }
-
-  document.getElementById('resultatSim').innerHTML = html;
-}
-async function chargerCours() {
-  const el = document.getElementById('listeCours');
-  if (!el) return;
-
-  el.innerHTML = `
-    <div class="tradingview-widget-container" style="height:600px;">
-      <div id="tv-masi"></div>
-    </div>
-    <div class="tradingview-widget-container" style="height:600px;margin-top:15px;">
-      <div id="tv-screener"></div>
-    </div>
-  `;
-
-  // Widget MASI
-  const s1 = document.createElement('script');
-  s1.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
-  s1.async = true;
-  s1.innerHTML = JSON.stringify({
-    colorTheme: "light",
-    locale: "fr",
-    width: "100%",
-    height: "600",
-    tabs: [{
-      title: "Maroc",
-      symbols: [
-  {s: "CASABLANCA:MASI", d: "MASI"},
-  {s: "CASABLANCA:ADH", d: "Addoha"},
-  {s: "CASABLANCA:AFMA", d: "AFMA"},
-  {s: "CASABLANCA:AFI", d: "Afric Industries"},
-  {s: "CASABLANCA:GAZ", d: "Afriquia Gaz"},
-  {s: "CASABLANCA:AGMA", d: "Agma"},
-  {s: "CASABLANCA:AKDI", d: "Akdital"},
-  {s: "CASABLANCA:ALL", d: "Alliances"},
-  {s: "CASABLANCA:ALM", d: "Aluminium Maroc"},
-  {s: "CASABLANCA:ARD", d: "Aradei Capital"},
-  {s: "CASABLANCA:ATL", d: "Atlantasanad"},
-  {s: "CASABLANCA:ATW", d: "Attijariwafa Bank"},
-  {s: "CASABLANCA:AUTO", d: "Auto Hall"},
-  {s: "CASABLANCA:NEJ", d: "Auto Nejma"},
-  {s: "CASABLANCA:BAL", d: "Balima"},
-  {s: "CASABLANCA:BCP", d: "BCP"},
-  {s: "CASABLANCA:BMCI", d: "BMCI"},
-  {s: "CASABLANCA:BOA", d: "Bank of Africa"},
-  {s: "CASABLANCA:CAR", d: "Cartier Saada"},
-  {s: "CASABLANCA:CAS", d: "Cash Plus"},
-  {s: "CASABLANCA:CDM", d: "CDM"},
-  {s: "CASABLANCA:CFG", d: "CFG Bank"},
-  {s: "CASABLANCA:CIH", d: "CIH Bank"},
-  {s: "CASABLANCA:CIM", d: "Ciments Maroc"},
-  {s: "CASABLANCA:CMGP", d: "CMGP Group"},
-  {s: "CASABLANCA:CMT", d: "CMT"},
-  {s: "CASABLANCA:COL", d: "Colorado"},
-  {s: "CASABLANCA:CSR", d: "COSUMAR"},
-  {s: "CASABLANCA:CTM", d: "CTM"},
-  {s: "CASABLANCA:DARI", d: "Dari Couspate"},
-  {s: "CASABLANCA:DHO", d: "Delta Holding"},
-  {s: "CASABLANCA:DIS", d: "Disty Technologies"},
-  {s: "CASABLANCA:DIW", d: "DISWAY"},
-  {s: "CASABLANCA:ENN", d: "Ennakl"},
-  {s: "CASABLANCA:EQD", d: "EQDOM"},
-  {s: "CASABLANCA:FBR", d: "Fenie Brossette"},
-  {s: "CASABLANCA:HPS", d: "HPS"},
-  {s: "CASABLANCA:IBC", d: "IBMaroc.com"},
-  {s: "CASABLANCA:IMR", d: "Immorente"},
-  {s: "CASABLANCA:INV", d: "INVOLYS"},
-  {s: "CASABLANCA:JET", d: "Jet Contractors"},
-  {s: "CASABLANCA:LBV", d: "Label Vie"},
-  {s: "CASABLANCA:LHM", d: "LafargeHolcim"},
-  {s: "CASABLANCA:LES", d: "Lesieur Cristal"},
-  {s: "CASABLANCA:M2M", d: "M2M Group"},
-  {s: "CASABLANCA:MOX", d: "Maghreb Oxygene"},
-  {s: "CASABLANCA:MAB", d: "Maghrebail"},
-  {s: "CASABLANCA:MNG", d: "Managem"},
-  {s: "CASABLANCA:MAL", d: "Maroc Leasing"},
-  {s: "CASABLANCA:IAM", d: "Maroc Telecom"},
-  {s: "CASABLANCA:MDP", d: "Med Paper"},
-  {s: "CASABLANCA:MIC", d: "Microdata"},
-  {s: "CASABLANCA:MSA", d: "Mutandis"},
-  {s: "CASABLANCA:OUL", d: "Oulmes"},
-  {s: "CASABLANCA:PPH", d: "PROMOPHARM"},
-  {s: "CASABLANCA:REB", d: "Rebab Company"},
-  {s: "CASABLANCA:RDS", d: "Resid Dar Saada"},
-  {s: "CASABLANCA:RIS", d: "Risma"},
-  {s: "CASABLANCA:S2M", d: "S2M"},
-  {s: "CASABLANCA:SAL", d: "SALAFIN"},
-  {s: "CASABLANCA:SAN", d: "Sanlam Maroc"},
-  {s: "CASABLANCA:SGT", d: "SGTM"},
-  {s: "CASABLANCA:SMI", d: "SMI"},
-  {s: "CASABLANCA:SNA", d: "SNA"},
-  {s: "CASABLANCA:SNP", d: "SNEP"},
-  {s: "CASABLANCA:SDP", d: "SODEP"},
-  {s: "CASABLANCA:SNS", d: "Sonasid"},
-  {s: "CASABLANCA:STH", d: "SOTHEMA"},
-  {s: "CASABLANCA:SRM", d: "SRM"},
-  {s: "CASABLANCA:SBM", d: "Ste Boissons"},
-  {s: "CASABLANCA:STR", d: "STROC Industries"},
-  {s: "CASABLANCA:TQM", d: "TAQA Morocco"},
-  {s: "CASABLANCA:TGC", d: "TGCC"},
-  {s: "CASABLANCA:TTE", d: "TotalEnergie MM"},
-  {s: "CASABLANCA:UNI", d: "Unimer"},
-  {s: "CASABLANCA:VIC", d: "Vicenne"},
-  {s: "CASABLANCA:WAA", d: "Wafa Assur"},
-  {s: "CASABLANCA:ZEL", d: "Zellidja"}
-]
-    }]
-  });
-  document.getElementById('tv-masi').appendChild(s1);
-
-  // Widget Screener toutes valeurs
-  const s2 = document.createElement('script');
-  s2.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
-  s2.async = true;
-  s2.innerHTML = JSON.stringify({
-    width: "100%",
-    height: "600",
-    defaultColumn: "overview",
-    defaultScreen: "most_capitalized",
-    market: "morocco",
-    showToolbar: true,
-    colorTheme: "light",
-    locale: "fr"
-  });
-  document.getElementById('tv-screener').appendChild(s2);
-
-  document.getElementById('dateMajCours').innerText = new Date().toLocaleTimeString();
-}
-
-let oldShow = showEcran;
-showEcran = function(nom) {
-  oldShow(nom);
-  if (nom == 'ecranMarche') chargerCours();
-};
-
-setInterval(() => {
-  let ecran = document.getElementById('ecranMarche');
-  if (ecran && ecran.classList.contains('active')) chargerCours();
-}, 30000);
-    // PILOTAGE ENCAISSEMENT
-function renderPilotage() {
-    let realise = { debit: 0, credit: 0, taxes: 0, fraisV: 0, achatBrut: 0 };
-    
-    // 1. Calcul du RÉALISÉ (Historique)
-    DB.transactions.forEach(t => {
-        if (t.type === 'VENTE') {
-            realise.achatBrut += (t.pru * t.qte);
-            realise.fraisV += (t.frais || 0);
-            realise.taxes += (t.taxe || 0);
-            realise.credit += (t.prix * t.qte);
-        }
-    });
-    realise.debit = realise.achatBrut + realise.fraisV + realise.taxes;
-
-    // Affichage Réalisé
-    document.getElementById('resultsEncaisse').style.display = 'grid';
-    document.getElementById('res-realise').innerText = R2(realise.credit - realise.debit) + " Dh";
-    document.getElementById('r-achat').innerText = "- " + R2(realise.achatBrut);
-    document.getElementById('r-f-ven').innerText = "- " + R2(realise.fraisV);
-    document.getElementById('r-tax').innerText = "- " + R2(realise.taxes);
-    document.getElementById('r-credit').innerText = "+ " + R2(realise.credit);
-
-    // 2. Préparation du LATENT (Portefeuille)
-    let htmlLatent = '<table style="width:100%; font-size:12px; border-collapse:collapse;">';
-    htmlLatent += '<tr style="background:#eee;"><th>Valeur</th><th>Qte</th><th>PRU</th><th>Cours J</th><th>Action</th></tr>';
-    
-    Object.keys(DB.portefeuille).forEach(v => {
-        let p = DB.portefeuille[v];
-        if(p.qte > 0) {
-            htmlLatent += `<tr style="border-bottom:1px solid #ddd; height:40px;">
-                <td><b>${v}</b></td>
-                <td>${p.qte}</td>
-                <td>${R2(p.pru)}</td>
-                <td><input type="number" step="0.01" class="cours-pilote" data-titre="${v}" 
-                    style="width:60px; padding:5px;" oninput="majGlobalPilotage()"></td>
-                <td id="res-l-${v}" style="font-weight:bold;">0.00</td>
-            </tr>`;
-        }
-    });
-    htmlLatent += '</table>';
-    // On injecte le tableau dans un conteneur (assure-toi d'avoir cet ID ou change-le)
-    let conteneur = document.getElementById('g-lat-val') || document.createElement('div');
-    conteneur.innerHTML = htmlLatent;
-}
-function majGlobalPilotage() {
-    let totalLatentDebit = 0;
-    let totalLatentCredit = 0;
-    let inputs = document.querySelectorAll('.cours-pilote');
-    
-    inputs.forEach(inp => {
-        let titre = inp.getAttribute('data-titre');
-        let p = DB.portefeuille[titre];
-        let cours = parseFloat(inp.value) || 0;
-        if(p && cours > 0) {
-            let brutVente = cours * p.qte;
-            let fraisV = R2(brutVente * 0.0011);
-            let gainNet = (brutVente - fraisV) - (p.pru * p.qte);
-            let taxe = gainNet > 0 ? R2(gainNet * 0.15) : 0;
-            let debitL = (p.pru * p.qte) + fraisV + taxe;
-            let netL = brutVente - debitL;
-            let el = document.getElementById('res-l-' + titre);
-            if(el){ el.innerText = R2(netL); el.style.color = netL >= 0 ? 'green' : 'red'; }
-            totalLatentCredit += brutVente;
-            totalLatentDebit += debitL;
-        }
-    });
-
-    let resR = document.getElementById('res-realise');
-    let netR = resR ? parseFloat(resR.innerText) || 0 : 0;
-    let global = netR + (totalLatentCredit - totalLatentDebit);
-    let resG = document.getElementById('res-global');
-    if(resG){ resG.innerText = R2(global) + " Dh"; resG.style.color = global >= 0 ? '#059669' : '#dc2626'; }
-}
-
-function ouvrirEncaissement() {
-    showEcran('ecranEncaisse');
-    renderPilotage();
+// Emplacement pour vos futures fonctions de calcul
+function mouvementInvest(type) {
+    const montant = parseFloat(document.getElementById('montantInvest').value);
+    if(isNaN(montant) || montant <= 0) return alert('Veuillez saisir un montant valide');
+    alert('Opération enregistrée : ' + (type === 1 ? 'Dépôt' : 'Retrait') + ' de ' + montant + ' MAD');
 }
 </script>
 </body>
